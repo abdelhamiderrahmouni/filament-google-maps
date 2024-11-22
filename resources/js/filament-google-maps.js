@@ -11,6 +11,7 @@ export default function filamentGoogleMapsField({
   clickable,
   defaultLocation,
   statePath,
+  markers = [],
   controls,
   layers,
   reverseGeocodeFields,
@@ -77,6 +78,8 @@ export default function filamentGoogleMapsField({
     map: null,
     geocoder: null,
     marker: null,
+    markers: [],
+    modelIds: [],
     markerLocation: null,
     layers: null,
     symbols: {
@@ -163,7 +166,9 @@ export default function filamentGoogleMapsField({
         map: this.map,
       });
 
-      this.marker.setPosition(this.getCoordinates());
+      this.createMarkers();
+
+        this.marker.setPosition(this.getCoordinates());
 
       if (clickable) {
         this.map.addListener("click", (event) => {
@@ -420,6 +425,71 @@ export default function filamentGoogleMapsField({
           this.updateMap(location);
         }
       });
+    },
+    createMarkers: function () {
+      this.markers = markers.map((location) => {
+          console.log(location);
+          const marker = this.createMarker(location);
+          marker.setMap(this.map);
+
+          // if (this.config.markerAction) {
+          //     google.maps.event.addListener(marker, "click", (event) => {
+          //         this.$wire.mountAction(this.config.markerAction, {
+          //             selected_marker_id: marker.model_id,
+          //         });
+          //     });
+          // }
+
+          return marker;
+      });
+    },
+    createMarker: function (location) {
+      let markerIcon;
+
+      if (location.icon && typeof location.icon === "object") {
+          if (location.icon.hasOwnProperty("url")) {
+              markerIcon = {
+                  url: location.icon.url,
+              };
+
+              if (
+                  location.icon.hasOwnProperty("type") &&
+                  location.icon.type === "svg" &&
+                  location.icon.hasOwnProperty("scale")
+              ) {
+                  markerIcon.scaledSize = new google.maps.Size(
+                      location.icon.scale[0],
+                      location.icon.scale[1]
+                  );
+              }
+          }
+      }
+
+      const point = location.location;
+      const label = location.label;
+
+      const marker = new google.maps.Marker({
+          position: point,
+          title: label,
+          model_id: location.id,
+          ...(markerIcon && { icon: markerIcon }),
+      });
+
+      if (this.modelIds.indexOf(location.id) === -1) {
+          this.modelIds.push(location.id);
+      }
+
+      return marker;
+    },
+    removeMarker: function (marker) {
+      marker.setMap(null);
+    },
+    removeMarkers: function () {
+      for (let i = 0; i < this.markers.length; i++) {
+          this.markers[i].setMap(null);
+      }
+
+      this.markers = [];
     },
     markerMoved: function (event) {
       this.geoJsonContains(event.latLng);

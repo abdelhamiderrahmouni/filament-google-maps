@@ -6,7 +6,8 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-field', 'cheesegrits/filament-google-maps') }}"
+        x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('filament-google-maps-field-css', package: 'cheesegrits/filament-google-maps'))]"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-field', package: 'cheesegrits/filament-google-maps') }}"
         x-data="filamentGoogleMapsField({
                     state: $wire.entangle('{{ $getStatePath() }}'),
                     setStateUsing: (path, state) => {
@@ -30,6 +31,7 @@
                     clickable: @js($getClickable()),
                     defaultLocation: @js($getDefaultLocation()),
                     statePath: @js($getStatePath()),
+                    markers: @js($getMarkers()),
                     controls: @js($getMapControls(false)),
                     layers: @js($getLayers()),
                     reverseGeocodeFields: @js($getReverseGeocode()),
@@ -54,7 +56,7 @@
                     polyOptions: @js($getPolyOptions()),
                     circleOptions: @js($getCircleOptions()),
                     rectangleOptions: @js($getRectangleOptions()),
-                    mapType: @js($getMapType()),
+                    mapType: @js($getType()),
                 })"
         id="{{ $getId() . '-alpine' }}"
         wire:ignore

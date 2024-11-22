@@ -35,6 +35,8 @@ class Map extends Field
 
     protected Closure|array $types = [];
 
+    private array|Closure $markers = [];
+
     protected Closure|string|null $placeField = null;
 
     protected Closure|array $countries = [];
@@ -71,7 +73,7 @@ class Map extends Field
 
     protected ?Closure $placeUpdatedUsing = null;
 
-    protected Closure|string $type = 'roadmap';
+    protected Closure|string $type = 'roadmap'; // roadmap, satellite, hybrid, terrain
 
     protected Closure|array $drawingModes = [
         'marker'    => true,
@@ -897,5 +899,17 @@ class Map extends Field
     public function getType(): string
     {
         return $this->evaluate($this->type);
+    }
+
+    public function getMarkers(): array
+    {
+        return $this->evaluate($this->markers);
+    }
+
+    public function markers(array|Closure $markers): static
+    {
+        $this->markers = $markers;
+
+        return $this;
     }
 }
