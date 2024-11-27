@@ -6,6 +6,7 @@ use Cheesegrits\FilamentGoogleMaps\Helpers\FieldHelper;
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
 use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Field;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,9 +34,15 @@ class Map extends Field
 
     protected Closure|string|null $autocomplete = null;
 
+    protected Closure|bool $drawRoutes = false;
+
     protected Closure|array $types = [];
 
+    protected Closure|string|null $markerAction = null;
+
     private array|Closure $markers = [];
+
+    protected Closure|bool $enableClustering = false;
 
     protected Closure|string|null $placeField = null;
 
@@ -911,5 +918,43 @@ class Map extends Field
         $this->markers = $markers;
 
         return $this;
+    }
+
+    public function markerAction(Closure|string $markerAction): static
+    {
+        $this->markerAction = $markerAction;
+
+        return $this;
+    }
+
+    public function getMarkerAction(): ?string
+    {
+        return $this->evaluate($this->markerAction);
+    }
+
+    // enableClustering
+    public function enableClustering(Closure|bool $enableClustering = true): static
+    {
+        $this->enableClustering = $enableClustering;
+
+        return $this;
+    }
+
+    public function getEnableClustering(): ?bool
+    {
+        return $this->evaluate($this->enableClustering);
+    }
+
+    // drawRoutes
+    public function drawRoutes(Closure|bool $drawRoutes = true): static
+    {
+        $this->drawRoutes = $drawRoutes;
+
+        return $this;
+    }
+
+    public function getDrawRoutes(): ?bool
+    {
+        return (bool) $this->evaluate($this->drawRoutes);
     }
 }

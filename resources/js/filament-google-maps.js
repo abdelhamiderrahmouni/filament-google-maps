@@ -1,3 +1,5 @@
+import {MarkerClusterer} from "@googlemaps/markerclusterer";
+
 export default function filamentGoogleMapsField({
   state,
   setStateUsing,
@@ -12,6 +14,9 @@ export default function filamentGoogleMapsField({
   defaultLocation,
   statePath,
   markers = [],
+  enableClustering = false,
+  markerAction = null,
+  drawRoutes = false,
   controls,
   layers,
   reverseGeocodeFields,
@@ -74,423 +79,462 @@ export default function filamentGoogleMapsField({
   mapType = 'roadmap',
 }) {
   return {
-    state,
-    map: null,
-    geocoder: null,
-    marker: null,
-    markers: [],
-    modelIds: [],
-    markerLocation: null,
-    layers: null,
-    symbols: {
-      "%n": ["street_number"],
-      "%z": ["postal_code"],
-      "%S": ["street_address", "route"],
-      "%A1": ["administrative_area_level_1"],
-      "%A2": ["administrative_area_level_2"],
-      "%A3": ["administrative_area_level_3"],
-      "%A4": ["administrative_area_level_4"],
-      "%A5": ["administrative_area_level_5"],
-      "%a1": ["administrative_area_level_1"],
-      "%a2": ["administrative_area_level_2"],
-      "%a3": ["administrative_area_level_3"],
-      "%a4": ["administrative_area_level_4"],
-      "%a5": ["administrative_area_level_5"],
-      "%L": ["locality", "postal_town"],
-      "%D": ["sublocality"],
-      "%C": ["country"],
-      "%c": ["country"],
-      "%p": ["premise"],
-      "%P": ["premise"],
-      "%sp": ["subpremise", "route"],
-      "%SP": ["subpremise", "route"],
-    },
-    drawingManager: null,
-    overlays: [],
-    dataLayer: null,
-    geoJsonDataLayer: null,
-    polyOptions: polyOptions,
-    circleOptions: circleOptions,
-    rectangleOptions: rectangleOptions,
-    selectedShape: null,
-    placesService: null,
-    placeFields: [],
-
-    loadGMaps: function () {
-      if (!document.getElementById("filament-google-maps-google-maps-js")) {
-        const script = document.createElement("script");
-        script.id = "filament-google-maps-google-maps-js";
-        window.filamentGoogleMapsAsyncLoad = this.createMap.bind(this);
-        script.src = gmaps + "&callback=filamentGoogleMapsAsyncLoad";
-        document.head.appendChild(script);
-      } else {
-        const waitForGlobal = function (key, callback) {
-          if (window[key]) {
-            callback();
+      state,
+      map: null,
+      geocoder: null,
+      marker: null,
+      markers: [],
+      clusterer: null,
+      modelIds: [],
+      markerLocation: null,
+      layers: null,
+      directionsService: null,
+      directionsRenderer: null,
+      routes: [],
+      drawRoutesEnabled: false,
+      symbols: {
+          "%n": ["street_number"],
+          "%z": ["postal_code"],
+          "%S": ["street_address", "route"],
+          "%A1": ["administrative_area_level_1"],
+          "%A2": ["administrative_area_level_2"],
+          "%A3": ["administrative_area_level_3"],
+          "%A4": ["administrative_area_level_4"],
+          "%A5": ["administrative_area_level_5"],
+          "%a1": ["administrative_area_level_1"],
+          "%a2": ["administrative_area_level_2"],
+          "%a3": ["administrative_area_level_3"],
+          "%a4": ["administrative_area_level_4"],
+          "%a5": ["administrative_area_level_5"],
+          "%L": ["locality", "postal_town"],
+          "%D": ["sublocality"],
+          "%C": ["country"],
+          "%c": ["country"],
+          "%p": ["premise"],
+          "%P": ["premise"],
+          "%sp": ["subpremise", "route"],
+          "%SP": ["subpremise", "route"],
+      },
+      drawingManager: null,
+      overlays: [],
+      dataLayer: null,
+      geoJsonDataLayer: null,
+      polyOptions: polyOptions,
+      circleOptions: circleOptions,
+      rectangleOptions: rectangleOptions,
+      selectedShape: null,
+      placesService: null,
+      placeFields: [],
+      loadGMaps: function () {
+          if (!document.getElementById("filament-google-maps-google-maps-js")) {
+              const script = document.createElement("script");
+              script.id = "filament-google-maps-google-maps-js";
+              window.filamentGoogleMapsAsyncLoad = this.createMap.bind(this);
+              script.src = gmaps + "&callback=filamentGoogleMapsAsyncLoad";
+              document.head.appendChild(script);
           } else {
-            setTimeout(function () {
-              waitForGlobal(key, callback);
-            }, 100);
-          }
-        };
-
-        waitForGlobal(
-          "filamentGoogleMapsAPILoaded",
-          function () {
-            this.createMap();
-          }.bind(this)
-        );
-      }
-    },
-
-    init: function () {
-      this.loadGMaps();
-    },
-
-    createMap: function () {
-      window.filamentGoogleMapsAPILoaded = true;
-
-      if (autocompleteReverse || Object.keys(reverseGeocodeFields).length > 0) {
-        this.geocoder = new google.maps.Geocoder();
-      }
-
-      this.map = new google.maps.Map(mapEl, {
-        center: this.getCoordinates(),
-        zoom: defaultZoom,
-        mapTypeId: google.maps.MapTypeId[mapType.toUpperCase()],
-        ...controls,
-      });
-
-      this.marker = new google.maps.Marker({
-        draggable: draggable,
-        map: this.map,
-      });
-
-      this.createMarkers();
-
-        this.marker.setPosition(this.getCoordinates());
-
-      if (clickable) {
-        this.map.addListener("click", (event) => {
-          this.markerMoved(event);
-        });
-      }
-
-      if (draggable) {
-        google.maps.event.addListener(this.marker, "dragend", (event) => {
-          this.markerMoved(event);
-        });
-      }
-
-      if (controls.searchBoxControl) {
-        const input = pacEl;
-        const searchBox = new google.maps.places.SearchBox(input);
-        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        searchBox.addListener("places_changed", () => {
-          input.value = "";
-          this.markerLocation = searchBox.getPlaces()[0].geometry.location;
-        });
-      }
-
-      if (hasPlaceUpdatedUsing) {
-        this.placesService = new google.maps.places.PlacesService(this.map);
-      }
-
-      this.placeFields = [
-        "address_components",
-        "formatted_address",
-        "geometry",
-        "name",
-      ];
-
-      if (!this.placeFields.includes(placeField)) {
-        this.placeFields.push(placeField);
-      }
-
-      if (hasPlaceUpdatedUsing) {
-        this.placeFields.push("photos");
-      }
-
-      if (autocomplete) {
-        const geoComplete = document.getElementById(autocomplete);
-
-        if (geoComplete) {
-          window.addEventListener(
-            "keydown",
-            function (e) {
-              if (
-                e.key === "U+000A" ||
-                e.key === "Enter" ||
-                e.code === "Enter"
-              ) {
-                if (e.target.nodeName === "INPUT" && e.target.type === "text") {
-                  e.preventDefault();
-                  return false;
-                }
-              }
-            },
-            true
-          );
-
-          const geocompleteOptions = {
-            fields: this.placeFields,
-            strictBounds: false,
-            types: types,
-          };
-
-          const gAutocomplete = new google.maps.places.Autocomplete(
-            geoComplete,
-            geocompleteOptions
-          );
-
-          gAutocomplete.setComponentRestrictions({
-            country: countries,
-          });
-
-          gAutocomplete.addListener("place_changed", () => {
-            const place = gAutocomplete.getPlace();
-
-            if (!place.geometry || !place.geometry.location) {
-              window.alert(
-                "No details available for input: '" + place.name + "'"
-              );
-              return;
-            }
-
-            if (place.geometry.viewport) {
-              this.map.fitBounds(place.geometry.viewport);
-            } else {
-              this.map.setCenter(place.geometry.location);
-            }
-
-            setStateUsing(autocomplete, place[placeField]);
-            this.marker.setPosition(place.geometry.location);
-            this.markerLocation = place.geometry.location;
-            this.setCoordinates(place.geometry.location);
-            this.updateGeocodeFromAddressComponents(place.address_components);
-            if (hasPlaceUpdatedUsing) {
-              placeUpdatedUsing(place);
-            }
-          });
-        }
-      }
-
-      if (layers) {
-        this.layers = layers.map((layerUrl) => {
-          const kmlLayer = new google.maps.KmlLayer({
-            url: layerUrl,
-            map: this.map,
-          });
-
-          kmlLayer.addListener("click", (kmlEvent) => {
-            const text = kmlEvent.featureData.description;
-          });
-        });
-      }
-
-      if (geoJson) {
-        if (geoJsonVisible) {
-          this.geoJsonDataLayer = this.map.data;
-        } else {
-          this.geoJsonDataLayer = new google.maps.Data();
-        }
-
-        if (/^http/.test(geoJson)) {
-          this.geoJsonDataLayer.loadGeoJson(geoJson);
-        } else {
-          this.geoJsonDataLayer.addGeoJson(JSON.parse(geoJson));
-        }
-      }
-
-      if (geolocateOnLoad) {
-        this.getLocation();
-      }
-
-      if (geolocate && "geolocation" in navigator) {
-        const locationButton = document.createElement("button");
-
-        locationButton.textContent = geolocateLabel;
-        locationButton.classList.add("custom-map-control-button");
-        this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-          locationButton
-        );
-
-        locationButton.addEventListener("click", (e) => {
-          e.preventDefault();
-          this.getLocation();
-        });
-      }
-
-      if (drawingControl) {
-        this.map.data.setStyle({
-          clickable: false,
-          cursor: null,
-          draggable: false,
-          editable: false,
-          fillOpacity: 0.0,
-          visible: false,
-          // zIndex: 0
-        });
-
-        this.drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: null,
-          drawingControl: true,
-          drawingControlOptions: {
-            position: drawingControlPosition,
-            drawingModes: [
-              ...(drawingModes.marker
-                ? [google.maps.drawing.OverlayType.MARKER]
-                : []),
-              ...(drawingModes.circle
-                ? [google.maps.drawing.OverlayType.CIRCLE]
-                : []),
-              ...(drawingModes.polygon
-                ? [google.maps.drawing.OverlayType.POLYGON]
-                : []),
-              ...(drawingModes.polyline
-                ? [google.maps.drawing.OverlayType.POLYLINE]
-                : []),
-              ...(drawingModes.rectangle
-                ? [google.maps.drawing.OverlayType.RECTANGLE]
-                : []),
-            ],
-          },
-          markerOptions: {
-            draggable: true,
-          },
-          polylineOptions: {
-            draggable: true,
-            editable: false,
-          },
-          rectangleOptions: this.rectangleOptions,
-          circleOptions: this.circleOptions,
-          polygonOptions: this.polyOptions,
-        });
-
-        this.drawingManager.setMap(this.map);
-        google.maps.event.addListener(
-          this.drawingManager,
-          "drawingmode_changed",
-          () => {
-            this.clearSelection();
-          }
-        );
-        // google.maps.event.addListener(this.map, 'click', () => {
-        //     this.clearSelection()
-        // });
-
-        if (drawingField) {
-          this.dataLayer = new google.maps.Data();
-
-          let geoJSON = getStateUsing(drawingField);
-          geoJSON && this.loadFeaturesCollection(JSON.parse(geoJSON));
-
-          google.maps.event.addListener(
-            this.drawingManager,
-            "overlaycomplete",
-            (event) => {
-              event.overlay.type = event.type;
-              event.overlay.id = this.guid();
-              event.overlay.feature = this.instanceFeature(event.overlay);
-              this.addOverlayEvents(event.overlay);
-              this.overlays.push(event.overlay);
-
-              if (event.type != google.maps.drawing.OverlayType.MARKER) {
-                // Switch back to non-drawing mode after drawing a shape.
-                this.drawingManager.setDrawingMode(null);
-                this.setSelection(event.overlay);
-              }
-
-              this.drawingModified();
-            }
-          );
-        }
-      }
-
-      this.$watch("state", () => {
-        if (this.state === undefined) {
-          return;
-        }
-
-        const location = this.getCoordinates();
-        const markerLocation = this.marker.getPosition();
-
-        if (
-          !(
-            location.lat === markerLocation.lat() &&
-            location.lng === markerLocation.lng()
-          )
-        ) {
-          this.updateAutocompleteFromLocation(location);
-          this.updateMap(location);
-        }
-      });
-    },
-    createMarkers: function () {
-      this.markers = markers.map((location) => {
-          console.log(location);
-          const marker = this.createMarker(location);
-          marker.setMap(this.map);
-
-          // if (this.config.markerAction) {
-          //     google.maps.event.addListener(marker, "click", (event) => {
-          //         this.$wire.mountAction(this.config.markerAction, {
-          //             selected_marker_id: marker.model_id,
-          //         });
-          //     });
-          // }
-
-          return marker;
-      });
-    },
-    createMarker: function (location) {
-      let markerIcon;
-
-      if (location.icon && typeof location.icon === "object") {
-          if (location.icon.hasOwnProperty("url")) {
-              markerIcon = {
-                  url: location.icon.url,
+              const waitForGlobal = function (key, callback) {
+                  if (window[key]) {
+                      callback();
+                  } else {
+                      setTimeout(function () {
+                          waitForGlobal(key, callback);
+                      }, 100);
+                  }
               };
 
-              if (
-                  location.icon.hasOwnProperty("type") &&
-                  location.icon.type === "svg" &&
-                  location.icon.hasOwnProperty("scale")
-              ) {
-                  markerIcon.scaledSize = new google.maps.Size(
-                      location.icon.scale[0],
-                      location.icon.scale[1]
+              waitForGlobal(
+                  "filamentGoogleMapsAPILoaded",
+                  function () {
+                      this.createMap();
+                  }.bind(this)
+              );
+          }
+      },
+
+      init: function () {
+          this.loadGMaps();
+      },
+
+      createMap: function () {
+          window.filamentGoogleMapsAPILoaded = true;
+
+          if (autocompleteReverse || Object.keys(reverseGeocodeFields).length > 0) {
+              this.geocoder = new google.maps.Geocoder();
+          }
+
+          this.map = new google.maps.Map(mapEl, {
+              center: this.getCoordinates(),
+              zoom: defaultZoom,
+              mapTypeId: google.maps.MapTypeId[mapType.toUpperCase()],
+              ...controls,
+          });
+
+          this.marker = new google.maps.Marker({
+              draggable: draggable,
+              map: this.map,
+          });
+
+          this.directionsService = new google.maps.DirectionsService();
+          this.directionsRenderer = new google.maps.DirectionsRenderer({
+              suppressMarkers: true, // Don't show default markers
+              preserveViewport: true // Don't auto-zoom
+          });
+          this.directionsRenderer.setMap(this.map);
+
+          this.createMarkers();
+          this.createClustering();
+          this.drawRoutes();
+
+          this.marker.setPosition(this.getCoordinates());
+
+          if (clickable) {
+              this.map.addListener("click", (event) => {
+                  this.markerMoved(event);
+              });
+          }
+
+          if (draggable) {
+              google.maps.event.addListener(this.marker, "dragend", (event) => {
+                  this.markerMoved(event);
+              });
+          }
+
+          if (controls.searchBoxControl) {
+              const input = pacEl;
+              const searchBox = new google.maps.places.SearchBox(input);
+              this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+              searchBox.addListener("places_changed", () => {
+                  input.value = "";
+                  this.markerLocation = searchBox.getPlaces()[0].geometry.location;
+              });
+          }
+
+          if (drawRoutes) {
+              this.addDrawRoutesButton();
+          }
+
+          if (hasPlaceUpdatedUsing) {
+              this.placesService = new google.maps.places.PlacesService(this.map);
+          }
+
+          this.placeFields = [
+              "address_components",
+              "formatted_address",
+              "geometry",
+              "name",
+          ];
+
+          if (!this.placeFields.includes(placeField)) {
+              this.placeFields.push(placeField);
+          }
+
+          if (hasPlaceUpdatedUsing) {
+              this.placeFields.push("photos");
+          }
+
+          if (autocomplete) {
+              const geoComplete = document.getElementById(autocomplete);
+
+              if (geoComplete) {
+                  window.addEventListener(
+                      "keydown",
+                      function (e) {
+                          if (
+                              e.key === "U+000A" ||
+                              e.key === "Enter" ||
+                              e.code === "Enter"
+                          ) {
+                              if (e.target.nodeName === "INPUT" && e.target.type === "text") {
+                                  e.preventDefault();
+                                  return false;
+                              }
+                          }
+                      },
+                      true
+                  );
+
+                  const geocompleteOptions = {
+                      fields: this.placeFields,
+                      strictBounds: false,
+                      types: types,
+                  };
+
+                  const gAutocomplete = new google.maps.places.Autocomplete(
+                      geoComplete,
+                      geocompleteOptions
+                  );
+
+                  gAutocomplete.setComponentRestrictions({
+                      country: countries,
+                  });
+
+                  gAutocomplete.addListener("place_changed", () => {
+                      const place = gAutocomplete.getPlace();
+
+                      if (!place.geometry || !place.geometry.location) {
+                          window.alert(
+                              "No details available for input: '" + place.name + "'"
+                          );
+                          return;
+                      }
+
+                      if (place.geometry.viewport) {
+                          this.map.fitBounds(place.geometry.viewport);
+                      } else {
+                          this.map.setCenter(place.geometry.location);
+                      }
+
+                      setStateUsing(autocomplete, place[placeField]);
+                      this.marker.setPosition(place.geometry.location);
+                      this.markerLocation = place.geometry.location;
+                      this.setCoordinates(place.geometry.location);
+                      this.updateGeocodeFromAddressComponents(place.address_components);
+                      if (hasPlaceUpdatedUsing) {
+                          placeUpdatedUsing(place);
+                      }
+                  });
+              }
+          }
+
+          if (layers) {
+              this.layers = layers.map((layerUrl) => {
+                  const kmlLayer = new google.maps.KmlLayer({
+                      url: layerUrl,
+                      map: this.map,
+                  });
+
+                  kmlLayer.addListener("click", (kmlEvent) => {
+                      const text = kmlEvent.featureData.description;
+                  });
+              });
+          }
+
+          if (geoJson) {
+              if (geoJsonVisible) {
+                  this.geoJsonDataLayer = this.map.data;
+              } else {
+                  this.geoJsonDataLayer = new google.maps.Data();
+              }
+
+              if (/^http/.test(geoJson)) {
+                  this.geoJsonDataLayer.loadGeoJson(geoJson);
+              } else {
+                  this.geoJsonDataLayer.addGeoJson(JSON.parse(geoJson));
+              }
+          }
+
+          if (geolocateOnLoad) {
+              this.getLocation();
+          }
+
+          if (geolocate && "geolocation" in navigator) {
+              const locationButton = document.createElement("button");
+
+              locationButton.textContent = geolocateLabel;
+              locationButton.classList.add("custom-map-control-button");
+              this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+                  locationButton
+              );
+
+              locationButton.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  this.getLocation();
+              });
+          }
+
+          if (drawingControl) {
+              this.map.data.setStyle({
+                  clickable: false,
+                  cursor: null,
+                  draggable: false,
+                  editable: false,
+                  fillOpacity: 0.0,
+                  visible: false,
+                  // zIndex: 0
+              });
+
+              this.drawingManager = new google.maps.drawing.DrawingManager({
+                  drawingMode: null,
+                  drawingControl: true,
+                  drawingControlOptions: {
+                      position: drawingControlPosition,
+                      drawingModes: [
+                          ...(drawingModes.marker
+                              ? [google.maps.drawing.OverlayType.MARKER]
+                              : []),
+                          ...(drawingModes.circle
+                              ? [google.maps.drawing.OverlayType.CIRCLE]
+                              : []),
+                          ...(drawingModes.polygon
+                              ? [google.maps.drawing.OverlayType.POLYGON]
+                              : []),
+                          ...(drawingModes.polyline
+                              ? [google.maps.drawing.OverlayType.POLYLINE]
+                              : []),
+                          ...(drawingModes.rectangle
+                              ? [google.maps.drawing.OverlayType.RECTANGLE]
+                              : []),
+                      ],
+                  },
+                  markerOptions: {
+                      draggable: true,
+                  },
+                  polylineOptions: {
+                      draggable: true,
+                      editable: false,
+                  },
+                  rectangleOptions: this.rectangleOptions,
+                  circleOptions: this.circleOptions,
+                  polygonOptions: this.polyOptions,
+              });
+
+              this.drawingManager.setMap(this.map);
+              google.maps.event.addListener(
+                  this.drawingManager,
+                  "drawingmode_changed",
+                  () => {
+                      this.clearSelection();
+                  }
+              );
+              // google.maps.event.addListener(this.map, 'click', () => {
+              //     this.clearSelection()
+              // });
+
+              if (drawingField) {
+                  this.dataLayer = new google.maps.Data();
+
+                  let geoJSON = getStateUsing(drawingField);
+                  geoJSON && this.loadFeaturesCollection(JSON.parse(geoJSON));
+
+                  google.maps.event.addListener(
+                      this.drawingManager,
+                      "overlaycomplete",
+                      (event) => {
+                          event.overlay.type = event.type;
+                          event.overlay.id = this.guid();
+                          event.overlay.feature = this.instanceFeature(event.overlay);
+                          this.addOverlayEvents(event.overlay);
+                          this.overlays.push(event.overlay);
+
+                          if (event.type != google.maps.drawing.OverlayType.MARKER) {
+                              // Switch back to non-drawing mode after drawing a shape.
+                              this.drawingManager.setDrawingMode(null);
+                              this.setSelection(event.overlay);
+                          }
+
+                          this.drawingModified();
+                      }
                   );
               }
           }
-      }
 
-      const point = location.location;
-      const label = location.label;
+          this.$watch("state", () => {
+              if (this.state === undefined) {
+                  return;
+              }
 
-      const marker = new google.maps.Marker({
-          position: point,
-          title: label,
-          model_id: location.id,
-          ...(markerIcon && { icon: markerIcon }),
-      });
+              const location = this.getCoordinates();
+              const markerLocation = this.marker.getPosition();
 
-      if (this.modelIds.indexOf(location.id) === -1) {
-          this.modelIds.push(location.id);
-      }
+              if (
+                  !(
+                      location.lat === markerLocation.lat() &&
+                      location.lng === markerLocation.lng()
+                  )
+              ) {
+                  this.updateAutocompleteFromLocation(location);
+                  this.updateMap(location);
+              }
+          });
+      },
+      createMarkers: function () {
+          // Clear existing routes before updating markers
+          this.routes.forEach(route => {
+              if (route.polyline) {
+                  route.polyline.setMap(null);
+              }
+              if (route.label) {
+                  route.label.close();
+              }
+          });
+          this.routes = [];
+          // Existing marker creation code
+          this.markers = markers.map((location) => {
+              const marker = this.createMarker(location);
+              marker.setMap(this.map);
 
-      return marker;
-    },
-    removeMarker: function (marker) {
-      marker.setMap(null);
-    },
-    removeMarkers: function () {
-      for (let i = 0; i < this.markers.length; i++) {
-          this.markers[i].setMap(null);
-      }
+              if (markerAction) {
+                  google.maps.event.addListener(marker, "click", (event) => {
+                      this.$wire.call(markerAction, {
+                          selected_marker_data: marker.model_data,
+                      });
+                  });
+              }
 
-      this.markers = [];
-    },
+              return marker;
+          });
+
+          // Draw routes after creating markers
+          this.drawRoutes();
+      },
+      createMarker: function (location) {
+          let markerIcon;
+
+          if (location.icon && typeof location.icon === "object") {
+              if (location.icon.hasOwnProperty("url")) {
+                  markerIcon = {
+                      url: location.icon.url,
+                  };
+
+                  if (
+                      location.icon.hasOwnProperty("type") &&
+                      location.icon.type === "svg" &&
+                      location.icon.hasOwnProperty("scale")
+                  ) {
+                      markerIcon.scaledSize = new google.maps.Size(
+                          location.icon.scale[0],
+                          location.icon.scale[1]
+                      );
+                  }
+              }
+          }
+
+          const point = location.location;
+          const label = location.label;
+
+          const marker = new google.maps.Marker({
+              position: point,
+              title: label,
+              model_data: location.data,
+              ...(markerIcon && {icon: markerIcon}),
+          });
+
+          if (this.modelIds.indexOf(location.data) === -1) {
+              this.modelIds.push(location.data);
+          }
+
+          return marker;
+      },
+      removeMarker: function (marker) {
+          marker.setMap(null);
+      },
+      removeMarkers: function () {
+          this.routes.forEach(route => {
+              if (route.polyline) {
+                  route.polyline.setMap(null);
+              }
+              if (route.label) {
+                  route.label.close();
+              }
+          });
+          this.routes = [];
+          // Existing marker removal code
+          for (let i = 0; i < this.markers.length; i++) {
+              this.markers[i].setMap(null);
+          }
+          this.markers = [];
+      },
     markerMoved: function (event) {
       this.geoJsonContains(event.latLng);
       this.markerLocation = event.latLng.toJSON();
@@ -510,6 +554,153 @@ export default function filamentGoogleMapsField({
         );
       }
     },
+    createClustering: function () {
+      if (this.markers.length > 0 && enableClustering) {
+          // use default algorithm and renderer
+          this.clusterer = new MarkerClusterer({
+              map: this.map,
+              markers: this.markers,
+          });
+      }
+    },
+    updateClustering: function () {
+      if (enableClustering) {
+          this.clusterer.clearMarkers();
+          this.clusterer.addMarkers(this.markers);
+      }
+    },
+    addDrawRoutesButton: function() {
+      const button = document.createElement('button');
+      button.textContent = 'Draw Routes';
+      button.style.backgroundColor = '#4CAF50';
+      button.style.border = 'none';
+      button.style.color = 'white';
+      button.style.padding = '10px 20px';
+      button.style.textAlign = 'center';
+      button.style.textDecoration = 'none';
+      button.style.display = 'inline-block';
+      button.style.fontSize = '16px';
+      button.style.margin = '4px 2px';
+      button.style.cursor = 'pointer';
+      button.style.borderRadius = '4px';
+
+      button.addEventListener('click', () => {
+          if (this.state && this.state.lat && this.state.lng) {
+              this.drawRoutesEnabled = drawRoutes;
+              this.clearRoutes();
+              this.drawRoutes();
+          } else {
+              alert('Default location is not set. Please set a default location first.');
+          }
+      });
+
+      this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(button);
+    },
+    drawRoutes: function() {
+          if (!this.drawRoutesEnabled) return;
+
+          // Clear any existing routes
+          this.routes.forEach(route => {
+              if (route.polyline) {
+                  route.polyline.setMap(null);
+              }
+              if (route.label) {
+                  route.label.setMap(null);
+              }
+          });
+          this.routes = [];
+
+          // Get the default location
+          const origin = this.getCoordinates();
+
+          // Create routes for each marker
+          this.markers.forEach((marker, index) => {
+              const destination = marker.getPosition();
+
+              // Calculate route
+              this.directionsService.route({
+                  origin: origin,
+                  destination: destination,
+                  travelMode: google.maps.TravelMode.DRIVING
+              }, (response, status) => {
+                  if (status === google.maps.DirectionsStatus.OK) {
+                      // Create a polyline for the route
+                      const path = response.routes[0].overview_path;
+                      const polyline = new google.maps.Polyline({
+                          path: path,
+                          strokeColor: this.getRouteColor(index),
+                          strokeOpacity: 0.8,
+                          strokeWeight: 3,
+                          map: this.map
+                      });
+
+                      // Calculate the midpoint for label placement
+                      const midpoint = path[Math.floor(path.length / 2)];
+
+                      // Calculate distance
+                      const distance = response.routes[0].legs[0].distance.text;
+                      const duration = response.routes[0].legs[0].duration.text;
+
+                      // Create a label at the midpoint
+                      const label = new google.maps.InfoWindow({
+                          position: midpoint,
+                          content: `<div style="background-color: white; padding: 5px; border-radius: 3px;">
+                <strong>Distance:</strong> ${distance}<br>
+                <strong>Duration:</strong> ${duration}
+              </div>`,
+                          pixelOffset: new google.maps.Size(0, -10)
+                      });
+
+                      // Store the route objects for later cleanup
+                      this.routes.push({
+                          polyline: polyline,
+                          label: label
+                      });
+
+                      // Add click listener to toggle label visibility
+                      polyline.addListener('click', () => {
+                          if (label.getMap()) {
+                              label.close();
+                          } else {
+                              label.open(this.map);
+                          }
+                      });
+
+                      // Show label by default
+                      label.open(this.map);
+                  } else {
+                      console.error('Directions request failed due to ' + status);
+                  }
+              });
+          });
+      },
+    clearRoutes: function() {
+        this.routes.forEach(route => {
+            if (route.polyline) {
+                route.polyline.setMap(null);
+            }
+            if (route.label) {
+                route.label.setMap(null);
+            }
+        });
+        this.routes = [];
+    },
+    getRouteColor: function(index) {
+          // Helper function to generate different colors for routes
+          const colors = [
+              '#FF0000', // Red
+              '#00FF00', // Green
+              '#0000FF', // Blue
+              '#FFA500', // Orange
+              '#800080', // Purple
+              '#008080', // Teal
+              '#FFD700', // Gold
+              '#FF69B4', // Hot Pink
+              '#4B0082', // Indigo
+              '#006400'  // Dark Green
+          ];
+          return colors[index % colors.length];
+        },
     updateMap: function (position) {
       this.marker.setPosition(position);
       this.map.panTo(position);
