@@ -1,6 +1,6 @@
 export default function filamentGoogleGeocomplete({
   setStateUsing,
-  debug,
+  debug = false,
   statePath,
   gmaps,
   filterName,
@@ -70,7 +70,7 @@ export default function filamentGoogleGeocomplete({
     },
 
     init: function (mapEl) {
-      console.log("geocomplete init");
+      if (debug) console.log("geocomplete init");
       this.mapEl = mapEl;
 
       let typingTimer;
@@ -81,11 +81,11 @@ export default function filamentGoogleGeocomplete({
 
         if (geoComplete.value.length >= minChars) {
           typingTimer = setTimeout(() => {
-            console.log('minChars met, loading GMaps');
+            if (debug) console.log('minChars met, loading GMaps');
             this.loadGMaps();
           }, doneTypingInterval);
         } else {
-          console.log('minChars not met');
+          if (debug) console.log('minChars not met');
         }
       });
       },
@@ -271,9 +271,7 @@ export default function filamentGoogleGeocomplete({
         }
       });
 
-      if (debug) {
-        console.log(replacements);
-      }
+      if (debug) console.log(replacements);
 
       return replacements;
     },
