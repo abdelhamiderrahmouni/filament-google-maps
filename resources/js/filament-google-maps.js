@@ -437,12 +437,7 @@ export default function filamentGoogleMapsField({
               const location = this.getCoordinates();
               const markerLocation = this.marker.getPosition();
 
-              if (
-                  !(
-                      location.lat === markerLocation.lat() &&
-                      location.lng === markerLocation.lng()
-                  )
-              ) {
+              if (!(location.lat === markerLocation.lat() && location.lng === markerLocation.lng())) {
                   this.updateAutocompleteFromLocation(location);
                   this.updateMap(location);
               }

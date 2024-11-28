@@ -64,7 +64,7 @@ class FilamentGoogleMapsServiceProvider extends PackageServiceProvider
                 AlpineComponent::make('filament-google-maps-field', __DIR__ . '/../dist/cheesegrits/filament-google-maps/filament-google-maps.js'),
                 AlpineComponent::make('filament-google-maps-widget', __DIR__ . '/../dist/cheesegrits/filament-google-maps/filament-google-maps-widget.js'),
                 AlpineComponent::make('filament-google-maps-entry', __DIR__ . '/../dist/cheesegrits/filament-google-maps/filament-google-maps-entry.js'),
-                Css::make('filament-google-maps-field-css', __DIR__ . '/../dist/cheesegrits/filament-google-maps/filament-google-maps.css')->loadedOnRequest()
+                Css::make('filament-google-maps-field-css', __DIR__ . '/../dist/cheesegrits/filament-google-maps/filament-google-maps.css')->loadedOnRequest(),
                 //                Js::make('filament-google-maps-field', __DIR__.'/../dist/cheesegrits/filament-google-maps/filament-google-maps.js'),
                 //                Js::make('filament-google-maps-geocomplete', __DIR__.'/../dist/cheesegrits/filament-google-maps/filament-google-geocomplete.js'),
                 //                Js::make('filament-google-maps-widget', __DIR__.'/../dist/cheesegrits/filament-google-maps/filament-google-maps-widget.js'),
