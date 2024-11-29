@@ -788,7 +788,7 @@ export default function filamentGoogleMapsField({
       this.state = position;
     },
     getCoordinates: function () {
-      if (this.state === null || !this.state.hasOwnProperty("lat")) {
+        if (this.state === null || !this.state.hasOwnProperty("lat") || typeof this.state.lat !== 'number' || typeof this.state.lng !== 'number') {
         this.state = { lat: defaultLocation.lat, lng: defaultLocation.lng };
       }
       return this.state;
