@@ -2,6 +2,7 @@
 
 namespace Cheesegrits\FilamentGoogleMaps\Fields;
 
+use Cheesegrits\FilamentGoogleMaps\DTOs\PositionDTO;
 use Cheesegrits\FilamentGoogleMaps\Helpers\FieldHelper;
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
 use Closure;
@@ -553,21 +554,22 @@ class Map extends Field
     {
         $position = $this->evaluate($this->defaultLocation);
 
-        if (is_array($position)) {
-            if (array_key_exists('lat', $position) && array_key_exists('lng', $position)) {
-                return $position;
-            } elseif (is_numeric($position[0]) && is_numeric($position[1])) {
-                return [
-                    'lat' => is_string($position[0]) ? round(floatval($position[0]), $this->precision) : $position[0],
-                    'lng' => is_string($position[1]) ? round(floatval($position[1]), $this->precision) : $position[1],
-                ];
-            }
+        if (!is_array($position)) {
+            return [
+                'lat' => 0,
+                'lng' => 0,
+            ];
         }
 
-        return [
-            'lat' => 0,
-            'lng' => 0,
-        ];
+        if (array_key_exists('lat', $position) && array_key_exists('lng', $position))
+            return $position;
+
+        if (!is_numeric($position[0]) || !is_numeric($position[1])) {
+            throw new Exception('Invalid lat/lng provided for default location');
+        }
+
+        // default is when defaultLocation is a simple array like [(float), (float)]
+        return (new PositionDTO($position[0], $position[1], $this->precision))->toArray();
     }
 
     /**
