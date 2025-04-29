@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.0.13",
-    "esbuild": "^0.8.57",
+    "esbuild": "^0.25.3",
     "postcss": "^8.4.14",
     "prettier": "^2.8.8",
     "prettier-plugin-blade": "^1.6.11",
