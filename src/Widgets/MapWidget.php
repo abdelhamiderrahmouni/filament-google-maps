@@ -8,6 +8,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets;
+use Livewire\Attributes\Renderless;
 
 class MapWidget extends Widgets\Widget implements HasActions, HasForms
 {
@@ -185,30 +186,30 @@ class MapWidget extends Widgets\Widget implements HasActions, HasForms
         return preg_replace('/[^a-zA-Z0-9_]/', '', $mapId);
     }
 
-    public function updateMapData()
+    public function updateMapData(): ?array
     {
         $newDataChecksum = $this->generateDataChecksum();
 
         if ($newDataChecksum !== $this->dataChecksum) {
             $this->dataChecksum = $newDataChecksum;
 
-            $this->dispatch('updateMapData', [
-                'data' => $this->getCachedData(),
-            ])->self();
+            return $this->getCachedData();
         }
+
+        return null;
     }
 
-    public function updatedFilter(): void
+    public function updatedFilter(): ?array
     {
         $newDataChecksum = $this->generateDataChecksum();
 
         if ($newDataChecksum !== $this->dataChecksum) {
             $this->dataChecksum = $newDataChecksum;
 
-            $this->dispatch('filterChartData', [
-                'data' => $this->getCachedData(),
-            ])->self();
+            return $this->getCachedData();
         }
+
+        return null;
     }
 
     public function hasJs(): bool

@@ -36,9 +36,7 @@
             </x-slot>
         @endif
 
-        <div
-            {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateMapData\"" : '' !!}
-        >
+        <div>
             <div
                 x-ignore
                 ax-load
@@ -47,6 +45,7 @@
                             cachedData: {{ json_encode($this->getCachedData()) }},
                             config: {{ $this->getMapConfig() }},
                             mapEl: $refs.map,
+                            {{ ($pollingInterval = $this->getPollingInterval()) ? "pollingInterval: $pollingInterval," : '' }}
                         })"
                 wire:ignore
                 @if ($maxHeight = $this->getMaxHeight())

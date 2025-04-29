@@ -5,6 +5,7 @@ export default function filamentGoogleMapsWidget({
   cachedData,
   config,
   mapEl,
+  pollingInterval,
 }) {
   return {
     map: null,
@@ -77,6 +78,18 @@ export default function filamentGoogleMapsWidget({
       this.data = cachedData;
       this.config = { ...this.config, ...config };
       this.loadGMaps();
+
+      if (pollingInterval) {
+        setInterval(async () => {
+          let newData = await this.$wire.call("updateMapData");
+          if (! newData) return;
+
+          this.markers.map(marker => {
+            const newMarker = newData.find(location => location.id === marker.model_id);
+            marker.setPosition(newMarker.location);
+          });
+        }, pollingInterval);
+      }
     },
 
     callWire: function (thing) {},
@@ -293,8 +306,6 @@ export default function filamentGoogleMapsWidget({
         return false;
       }
 
-      console.log("moved");
-
       const bounds = this.map.getBounds();
       const visible = this.markers.filter((marker) => {
         return bounds.contains(marker.getPosition());
@@ -303,7 +314,6 @@ export default function filamentGoogleMapsWidget({
 
       if (!areEqual(this.modelIds, ids)) {
         this.modelIds = ids;
-        console.log(ids);
         this.$wire.set("mapFilterIds", ids);
       }
     },
