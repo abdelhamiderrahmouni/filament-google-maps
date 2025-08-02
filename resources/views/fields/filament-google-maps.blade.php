@@ -60,6 +60,8 @@
                     circleOptions: @js($getCircleOptions()),
                     rectangleOptions: @js($getRectangleOptions()),
                     mapType: @js($getType()),
+                    pollingInterval: @js($getPollingInterval()),
+                    markerUpdatesCallback: @js($getMarkerUpdatesCallback()),
                 })"
         id="{{ $getId() . '-alpine' }}"
         wire:ignore

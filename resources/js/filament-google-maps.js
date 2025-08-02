@@ -77,6 +77,8 @@ export default function filamentGoogleMapsField({
   hasReverseGeocodeUsing = false,
   hasPlaceUpdatedUsing = false,
   mapType = 'roadmap',
+  pollingInterval,
+  markerUpdatesCallback
 }) {
   return {
       state,
@@ -154,6 +156,17 @@ export default function filamentGoogleMapsField({
 
       init: function () {
           this.loadGMaps();
+          if (pollingInterval && markerUpdatesCallback) {
+              setInterval(async () => {
+                  let newData = await this.$wire.call(markerUpdatesCallback);
+                  if (! newData) return;
+
+                  this.markers.map(marker => {
+                      const newMarker = newData.find(location => location.id === marker.model_id);
+                      marker.setPosition(newMarker.location);
+                  });
+              }, pollingInterval);
+          }
       },
 
       createMap: function () {

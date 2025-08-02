@@ -78,6 +78,10 @@ class Map extends Field
 
     protected ?Closure $reverseGeocodeUsing = null;
 
+    protected Closure|int|null $pollingInterval = null;
+
+    protected Closure|string|null $markerUpdatesCallback = null;
+
     protected ?Closure $placeUpdatedUsing = null;
 
     protected Closure|string $type = 'roadmap'; // roadmap, satellite, hybrid, terrain
@@ -957,5 +961,29 @@ class Map extends Field
     public function getDrawRoutes(): ?bool
     {
         return (bool) $this->evaluate($this->drawRoutes);
+    }
+
+    public function pollingInterval(Closure|int $interval): static
+    {
+        $this->pollingInterval = $interval;
+
+        return $this;
+    }
+
+    public function getPollingInterval(): ?int
+    {
+        return $this->evaluate($this->pollingInterval);
+    }
+
+    public function markerUpdatesCallback(Closure|string $callback): static
+    {
+        $this->markerUpdatesCallback = $callback;
+
+        return $this;
+    }
+
+    public function getMarkerUpdatesCallback(): ?string
+    {
+        return $this->evaluate($this->markerUpdatesCallback);
     }
 }
