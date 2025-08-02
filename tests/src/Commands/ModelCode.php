@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cheesegrits\FilamentGoogleMaps\Tests\Commands\TestCase;
 use Illuminate\Support\Facades\Artisan;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Widgets;
 
 use Closure;
@@ -16,17 +18,17 @@ class MapTableWidget extends MapWidget implements Tables\Contracts\HasTable
         getTableRecords as traitGetTableRecords;
     }
 
-    protected static string $view = 'filament-google-maps::widgets.filament-google-maps-table-widget';
-
-    protected static ?string $heading = null;
-
-    protected static ?bool $filtered = true;
-
     public ?bool $mapIsFilter = false;
 
     public array $mapFilterIds = [];
 
     public bool $mapFilterFirstTime = true;
+
+    protected static string $view = 'filament-google-maps::widgets.filament-google-maps-table-widget';
+
+    protected static ?string $heading = null;
+
+    protected static ?bool $filtered = true;
 
     public function mapIsFilter(): bool
     {
@@ -44,16 +46,17 @@ class MapTableWidget extends MapWidget implements Tables\Contracts\HasTable
 
     protected function paginateTableQuery(Builder $query): Paginator
     {
-        return $query->simplePaginate($this->getTableRecordsPerPage() == 'all' ? $query->count() : $this->getTableRecordsPerPage());
+        return $query->simplePaginate($this->getTableRecordsPerPage() === 'all' ? $query->count() : $this->getTableRecordsPerPage());
     }
 
     protected function getRecords()
     {
         if (static::$filtered) {
             return $this->traitGetTableRecords();
-        } else {
-            return $this->getTable()->getModel()::all();
         }
+
+        return $this->getTable()->getModel()::all();
+
     }
 
     public function getTableRecords(): Collection|Paginator

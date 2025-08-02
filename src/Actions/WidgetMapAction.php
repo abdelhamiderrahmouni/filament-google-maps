@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Actions;
 
 use Cheesegrits\FilamentGoogleMaps\Fields\WidgetMap;
@@ -14,11 +16,6 @@ class WidgetMapAction extends BulkAction
     use CanCustomizeProcess;
 
     public $markers = [];
-
-    public static function getDefaultName(): ?string
-    {
-        return 'widget_map';
-    }
 
     protected function setUp(): void
     {
@@ -50,8 +47,8 @@ class WidgetMapAction extends BulkAction
 
                 $markers[] = [
                     'location' => [
-                        'lat' => $record->{$latField} ? round(floatval($record->{$latField}), 8) : 0,
-                        'lng' => $record->{$lngField} ? round(floatval($record->{$lngField}), 8) : 0,
+                        'lat' => $record->{$latField} ? round((float) ($record->{$latField}), 8) : 0,
+                        'lng' => $record->{$lngField} ? round((float) ($record->{$lngField}), 8) : 0,
                     ],
                 ];
             });
@@ -83,5 +80,10 @@ class WidgetMapAction extends BulkAction
 
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'widget_map';
     }
 }

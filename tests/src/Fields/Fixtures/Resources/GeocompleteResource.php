@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Fields\Fixtures\Resources;
 
 use Cheesegrits\FilamentGoogleMaps\Columns\MapColumn;

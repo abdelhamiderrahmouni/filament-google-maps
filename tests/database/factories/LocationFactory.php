@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Database\Factories;
 
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;
@@ -28,7 +30,7 @@ class LocationFactory extends Factory
         ];
     }
 
-    public function withRealAddressAndLatLng(string $country = 'united-states-of-america', ?string $city = null): LocationFactory
+    public function withRealAddressAndLatLng(string $country = 'united-states-of-america', ?string $city = null): self
     {
         //		$address = $this->faker->realAddress($country, $city);
         $f       = new RealAddressFactory;
@@ -45,7 +47,7 @@ class LocationFactory extends Factory
         ]);
     }
 
-    public function withRealLatLng(string $country = 'united-states-of-america', ?string $city = null): LocationFactory
+    public function withRealLatLng(string $country = 'united-states-of-america', ?string $city = null): self
     {
         //		$address = $this->faker->realAddress($country, $city);
         $f       = new RealAddressFactory;
@@ -62,7 +64,7 @@ class LocationFactory extends Factory
         ]);
     }
 
-    public function withRealAddress(string $country = 'united-states-of-america', ?string $city = null): LocationFactory
+    public function withRealAddress(string $country = 'united-states-of-america', ?string $city = null): self
     {
         //		$address = $this->faker->realAddress($country, $city);
         $f       = new RealAddressFactory;

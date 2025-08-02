@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Commands;
 
+use Exception;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Throwable;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
@@ -13,11 +17,11 @@ class MakeWidgetCommand extends Command
 {
     use CanManipulateFiles;
 
-    private $widgetClasses = ['MapWidget', 'MapTableWidget'];
-
     protected $description = 'Creates a Filament Google Maps widget class.';
 
     protected $signature = 'make:filament-google-maps-widget {name?} {model?} {--R|resource=} {--M|map} {--T|table} {--F|force}';
+
+    private $widgetClasses = ['MapWidget', 'MapTableWidget'];
 
     public function handle(): int
     {
@@ -77,10 +81,10 @@ class MakeWidgetCommand extends Command
             /** @noinspection PhpUnusedLocalVariableInspection */
             $model     = new ('\\App\\Models\\' . $modelName)();
             $modelName = '\\App\\Models\\' . $modelName;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             try {
                 $model = new $modelName;
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 echo "Can't find class $modelName or \\App\\Models\\$modelName\n";
 
                 return static::INVALID;
@@ -92,7 +96,7 @@ class MakeWidgetCommand extends Command
             $latLongFields = $modelName::getLatLngAttributes();
             /** @noinspection PhpUndefinedMethodInspection */
             $locationField = $modelName::getComputedLocation();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->line("Can't find your model's lat and lng attributes, did you run the fgm:model-code command and paste it into your model?");
 
             return static::INVALID;

@@ -1,32 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Helpers;
 
 use Illuminate\Support\Facades\Request;
 
 class MapsHelper
 {
-    const POSITION_BOTTOM_CENTER = 11;
+    public const POSITION_BOTTOM_CENTER = 11;
 
-    const POSITION_BOTTOM_LEFT = 10;
+    public const POSITION_BOTTOM_LEFT = 10;
 
-    const POSITION_BOTTOM_RIGHT = 12;
+    public const POSITION_BOTTOM_RIGHT = 12;
 
-    const POSITION_LEFT_CENTER = 4;
+    public const POSITION_LEFT_CENTER = 4;
 
-    const POSITION_LEFT_TOP = 5;
+    public const POSITION_LEFT_TOP = 5;
 
-    const POSITION_RIGHT_BOTTOM = 9;
+    public const POSITION_RIGHT_BOTTOM = 9;
 
-    const POSITION_RIGHT_CENTER = 8;
+    public const POSITION_RIGHT_CENTER = 8;
 
-    const POSITION_RIGHT_TOP = 7;
+    public const POSITION_RIGHT_TOP = 7;
 
-    const POSITION_TOP_CENTER = 2;
+    public const POSITION_TOP_CENTER = 2;
 
-    const POSITION_TOP_LEFT = 1;
+    public const POSITION_TOP_LEFT = 1;
 
-    const POSITION_TOP_RIGHT = 3;
+    public const POSITION_TOP_RIGHT = 3;
 
     public static function mapsKey($server = false): string
     {
@@ -47,9 +49,10 @@ class MapsHelper
     {
         if ($server) {
             return config('filament-google-maps.locale.api') ?? config('filament-google-maps.locale.language');
-        } else {
-            return config('filament-google-maps.locale.api');
         }
+
+        return config('filament-google-maps.locale.api');
+
     }
 
     public static function mapsRegion($server = false): ?string
@@ -102,7 +105,7 @@ class MapsHelper
 
     public static function reverseGeocode(array|string $lat, ?string $lng = null): string
     {
-        return (new Geocoder)->reverse(MapsHelper::getLatLng($lat, $lng));
+        return (new Geocoder)->reverse(self::getLatLng($lat, $lng));
     }
 
     public static function geocode(string $address): array
@@ -139,7 +142,8 @@ class MapsHelper
         if (is_array($lat)) {
             if (array_key_exists('lat', $lat) && array_key_exists('lng', $lat)) {
                 return $lat;
-            } elseif (count($lat) === 2) {
+            }
+            if (count($lat) === 2) {
                 return [
                     'lat' => $lat[0],
                     'lng' => $lat[1],

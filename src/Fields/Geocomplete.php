@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Fields;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\FieldHelper;
@@ -53,6 +55,39 @@ class Geocomplete extends Field implements Contracts\CanBeLengthConstrained, Con
     protected Closure|bool $debug = false;
 
     protected int $minChars = 0;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->afterStateHydrated(static function (Geocomplete $component, $state) {
+            if ($component->getIsLocation()) {
+                if ($component->getGeocodeOnLoad()) {
+                    $state = static::getLocationState($state);
+
+                    if (! MapsHelper::isLocationEmpty($state)) {
+                        $state['formatted_address'] = MapsHelper::reverseGeocode($state);
+                    } else {
+                        $state['formatted_address'] = '';
+                    }
+                } else {
+                    $state['formatted_address'] = '';
+                }
+
+                $component->state($state);
+            }
+        });
+
+        //        $this->afterStateUpdated(static function (Geocomplete $component, $state) {
+        //            if ($component->getIsLocation()) {
+        //                $component->state($state['formatted_address']);
+        //            }
+        //        });
+
+        $this->suffixActions([
+            Closure::fromCallable([$this, 'getGeolocateAction']),
+        ]);
+    }
 
     /**
      * DO NOT USE!  Only used by the Radius Filter, to set the state path for the filter form data.
@@ -368,39 +403,6 @@ class Geocomplete extends Field implements Contracts\CanBeLengthConstrained, Con
         return null;
     }
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->afterStateHydrated(static function (Geocomplete $component, $state) {
-            if ($component->getIsLocation()) {
-                if ($component->getGeocodeOnLoad()) {
-                    $state = static::getLocationState($state);
-
-                    if (! MapsHelper::isLocationEmpty($state)) {
-                        $state['formatted_address'] = MapsHelper::reverseGeocode($state);
-                    } else {
-                        $state['formatted_address'] = '';
-                    }
-                } else {
-                    $state['formatted_address'] = '';
-                }
-
-                $component->state($state);
-            }
-        });
-
-        //        $this->afterStateUpdated(static function (Geocomplete $component, $state) {
-        //            if ($component->getIsLocation()) {
-        //                $component->state($state['formatted_address']);
-        //            }
-        //        });
-
-        $this->suffixActions([
-            Closure::fromCallable([$this, 'getGeolocateAction']),
-        ]);
-    }
-
     /**
      * Create json configuration string
      */
@@ -430,16 +432,16 @@ class Geocomplete extends Field implements Contracts\CanBeLengthConstrained, Con
     {
         if (is_array($state)) {
             return $state;
-        } else {
-            try {
-                return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception $e) {
-                return [
-                    'lat' => 0,
-                    'lng' => 0,
-                ];
-            }
         }
+        try {
+            return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            return [
+                'lat' => 0,
+                'lng' => 0,
+            ];
+        }
+
     }
 
     public function getState(): mixed

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Cheesegrits\FilamentGoogleMaps\Tests\Fields\Fixtures\Livewire;
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;

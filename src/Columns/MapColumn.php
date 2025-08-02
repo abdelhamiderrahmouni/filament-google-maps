@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Columns;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
@@ -270,15 +272,15 @@ class MapColumn extends Column
 
         if (is_array($state)) {
             return $state;
-        } else {
-            try {
-                return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception $e) {
-                return [
-                    'lat' => 0,
-                    'lng' => 0,
-                ];
-            }
         }
+        try {
+            return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            return [
+                'lat' => 0,
+                'lng' => 0,
+            ];
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Actions;
 
 use Cheesegrits\FilamentGoogleMaps\Columns\MapColumn;
@@ -14,11 +16,6 @@ use Mastani\GoogleStaticMap\GoogleStaticMap;
 class StaticMapAction extends BulkAction
 {
     use CanCustomizeProcess;
-
-    public static function getDefaultName(): ?string
-    {
-        return 'static_map';
-    }
 
     protected function setUp(): void
     {
@@ -122,5 +119,10 @@ class StaticMapAction extends BulkAction
 
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'static_map';
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Controllers;
 
 use Illuminate\Support\Facades\Cache;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Actions;
 
 use Closure;
@@ -9,26 +11,9 @@ use Illuminate\Support\HtmlString;
 
 class GoToAction extends Action
 {
-    protected bool|Closure|null $isLivewireClickHandlerEnabled = false;
-
     public null|Closure|int $zoom = null;
 
-    public static function getDefaultName(): ?string
-    {
-        return 'setmapcenter';
-    }
-
-    public function zoom($zoom): static
-    {
-        $this->zoom = $zoom;
-
-        return $this;
-    }
-
-    public function getZoom(): ?int
-    {
-        return $this->evaluate($this->zoom) ?? 8;
-    }
+    protected bool|Closure|null $isLivewireClickHandlerEnabled = false;
 
     protected function setUp(): void
     {
@@ -46,12 +31,29 @@ class GoToAction extends Action
             return [
                 'x-on:click' => new HtmlString(
                     sprintf("\$dispatch('filament-google-maps::widget/setMapCenter', {lat: %f, lng: %f, zoom: %d})",
-                        round(floatval($record->{$latLngFields['lat']}), 8),
-                        round(floatval($record->{$latLngFields['lng']}), 8),
+                        round((float) ($record->{$latLngFields['lat']}), 8),
+                        round((float) ($record->{$latLngFields['lng']}), 8),
                         $this->getZoom()
                     )
                 ),
             ];
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'setmapcenter';
+    }
+
+    public function zoom($zoom): static
+    {
+        $this->zoom = $zoom;
+
+        return $this;
+    }
+
+    public function getZoom(): ?int
+    {
+        return $this->evaluate($this->zoom) ?? 8;
     }
 }

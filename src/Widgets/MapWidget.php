@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Widgets;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
@@ -15,11 +17,21 @@ class MapWidget extends Widgets\Widget implements HasActions, HasForms
     use InteractsWithForms;
     use Widgets\Concerns\CanPoll;
 
-    protected ?array $cachedData = null;
-
     public string $dataChecksum;
 
     public ?string $filter = null;
+
+    public array $controls = [
+        'mapTypeControl'    => true,
+        'scaleControl'      => true,
+        'streetViewControl' => true,
+        'rotateControl'     => true,
+        'fullscreenControl' => true,
+        'searchBoxControl'  => false,
+        'zoomControl'       => true,
+    ];
+
+    protected ?array $cachedData = null;
 
     protected static ?string $heading = null;
 
@@ -48,16 +60,6 @@ class MapWidget extends Widgets\Widget implements HasActions, HasForms
     protected static bool $collapsible = false;
 
     protected static string $view = 'filament-google-maps::widgets.filament-google-maps-widget';
-
-    public array $controls = [
-        'mapTypeControl'    => true,
-        'scaleControl'      => true,
-        'streetViewControl' => true,
-        'rotateControl'     => true,
-        'fullscreenControl' => true,
-        'searchBoxControl'  => false,
-        'zoomControl'       => true,
-    ];
 
     protected array $mapConfig = [
         'draggable' => false,

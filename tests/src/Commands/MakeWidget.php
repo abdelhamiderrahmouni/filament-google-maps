@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cheesegrits\FilamentGoogleMaps\Tests\Commands\TestCase;
 
 uses(TestCase::class);
@@ -28,9 +30,9 @@ it('makes a widget with the artisan make-widget command', function () {
     expect(app_path('Filament/Widgets/') . 'LocationMap.php')->toBeFile();
 });
 
-function convertNewlines($text)
-{
-    $text = implode("\n", explode("\r\n", $text));
-
-    return $text;
-}
+//function convertNewlines($text)
+//{
+//    $text = implode("\n", explode("\r\n", $text));
+//
+//    return $text;
+//}

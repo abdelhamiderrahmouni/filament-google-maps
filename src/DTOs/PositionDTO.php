@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\DTOs;
+
+use Exception;
+use JsonException;
 
 class PositionDTO
 {
@@ -11,7 +16,7 @@ class PositionDTO
     public int $precision;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(float|string $lat, float|string $lng, int $precision = 8)
     {
@@ -43,7 +48,7 @@ class PositionDTO
     /**
      * A json representation of the object
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function toJson(): string
     {
@@ -51,7 +56,7 @@ class PositionDTO
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function parseMeasurement(float|string $measurement, ?int $precision = null): float
     {
@@ -60,7 +65,7 @@ class PositionDTO
         }
 
         if (! is_float($measurement)) {
-            throw new \Exception('Invalid data provided to create PositionDTO: latitude and longitude must be float or a string containing a float');
+            throw new Exception('Invalid data provided to create PositionDTO: latitude and longitude must be float or a string containing a float');
         }
 
         if (! $precision) {

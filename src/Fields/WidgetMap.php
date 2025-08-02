@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Fields;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
@@ -11,6 +13,16 @@ use JsonException;
 
 class WidgetMap extends Field
 {
+    public array $controls = [
+        'mapTypeControl'    => true,
+        'scaleControl'      => true,
+        'streetViewControl' => true,
+        'rotateControl'     => true,
+        'fullscreenControl' => true,
+        'searchBoxControl'  => false,
+        'zoomControl'       => true,
+    ];
+
     protected string $view = 'filament-google-maps::fields.filament-google-widget-map';
 
     protected int $precision = 8;
@@ -50,16 +62,6 @@ class WidgetMap extends Field
         'fit'        => true,
         'gmaps'      => '',
         'clustering' => true,
-    ];
-
-    public array $controls = [
-        'mapTypeControl'    => true,
-        'scaleControl'      => true,
-        'streetViewControl' => true,
-        'rotateControl'     => true,
-        'fullscreenControl' => true,
-        'searchBoxControl'  => false,
-        'zoomControl'       => true,
     ];
 
     public function getHeading(): string
@@ -105,10 +107,11 @@ class WidgetMap extends Field
         if (is_array($position)) {
             if (array_key_exists('lat', $position) && array_key_exists('lng', $position)) {
                 return $position;
-            } elseif (is_numeric($position[0]) && is_numeric($position[1])) {
+            }
+            if (is_numeric($position[0]) && is_numeric($position[1])) {
                 return [
-                    'lat' => is_string($position[0]) ? round(floatval($position[0]), $this->precision) : $position[0],
-                    'lng' => is_string($position[1]) ? round(floatval($position[1]), $this->precision) : $position[1],
+                    'lat' => is_string($position[0]) ? round((float) ($position[0]), $this->precision) : $position[0],
+                    'lng' => is_string($position[1]) ? round((float) ($position[1]), $this->precision) : $position[1],
                 ];
             }
         }
@@ -290,15 +293,15 @@ class WidgetMap extends Field
 
         if (is_array($state)) {
             return $state;
-        } else {
-            try {
-                return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception $e) {
-                return [
-                    'lat' => 0,
-                    'lng' => 0,
-                ];
-            }
         }
+        try {
+            return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            return [
+                'lat' => 0,
+                'lng' => 0,
+            ];
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Infolists;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\FieldHelper;
@@ -13,6 +15,16 @@ use JsonException;
 
 class MapEntry extends Entry
 {
+    public array $controls = [
+        'mapTypeControl'    => true,
+        'scaleControl'      => true,
+        'streetViewControl' => true,
+        'rotateControl'     => true,
+        'fullscreenControl' => true,
+        'searchBoxControl'  => false,
+        'zoomControl'       => true,
+    ];
+
     protected string $view = 'filament-google-maps::infolists.filament-google-maps-entry';
 
     protected int $precision = 8;
@@ -54,16 +66,6 @@ class MapEntry extends Entry
     ];
 
     private array $componentTree = [];
-
-    public array $controls = [
-        'mapTypeControl'    => true,
-        'scaleControl'      => true,
-        'streetViewControl' => true,
-        'rotateControl'     => true,
-        'fullscreenControl' => true,
-        'searchBoxControl'  => false,
-        'zoomControl'       => true,
-    ];
 
     public function height(Closure|string $height): static
     {
@@ -128,7 +130,8 @@ class MapEntry extends Entry
 
             if ($url) {
                 return $file;
-            } elseif (Storage::disk($this->geoJsonDisk)->exists($file)) {
+            }
+            if (Storage::disk($this->geoJsonDisk)->exists($file)) {
                 return Storage::disk($this->geoJsonDisk)->get($file);
             }
         }
@@ -175,10 +178,11 @@ class MapEntry extends Entry
         if (is_array($position)) {
             if (array_key_exists('lat', $position) && array_key_exists('lng', $position)) {
                 return $position;
-            } elseif (is_numeric($position[0]) && is_numeric($position[1])) {
+            }
+            if (is_numeric($position[0]) && is_numeric($position[1])) {
                 return [
-                    'lat' => is_string($position[0]) ? round(floatval($position[0]), $this->precision) : $position[0],
-                    'lng' => is_string($position[1]) ? round(floatval($position[1]), $this->precision) : $position[1],
+                    'lat' => is_string($position[0]) ? round((float) ($position[0]), $this->precision) : $position[0],
+                    'lng' => is_string($position[1]) ? round((float) ($position[1]), $this->precision) : $position[1],
                 ];
             }
         }
@@ -271,12 +275,12 @@ class MapEntry extends Entry
 
         if (is_array($state)) {
             return $state;
-        } else {
-            try {
-                return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception $e) {
-                return $this->getDefaultLocation();
-            }
         }
+        try {
+            return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            return $this->getDefaultLocation();
+        }
+
     }
 }

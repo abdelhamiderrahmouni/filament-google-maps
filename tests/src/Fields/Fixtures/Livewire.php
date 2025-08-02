@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Fields\Fixtures;
 
 use Filament\Forms\Concerns\InteractsWithForms;

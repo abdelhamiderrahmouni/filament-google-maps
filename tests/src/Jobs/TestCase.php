@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Jobs;
 
 use Cheesegrits\FilamentGoogleMaps\Tests\TestCase as BaseTestCase;

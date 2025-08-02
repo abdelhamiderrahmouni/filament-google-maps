@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Database\Factories;
 
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\User;

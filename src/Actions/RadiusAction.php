@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Actions;
 
 use Cheesegrits\FilamentGoogleMaps\Helpers\MapsHelper;
@@ -14,23 +16,6 @@ class RadiusAction extends Action
     use CanCustomizeProcess;
 
     protected Closure|string|null $relationship = null;
-
-    public static function getDefaultName(): ?string
-    {
-        return 'radius';
-    }
-
-    public function relationship(Closure|string $relationship): static
-    {
-        $this->relationship = $relationship;
-
-        return $this;
-    }
-
-    public function getRelationship(): ?string
-    {
-        return $this->evaluate($this->relationship);
-    }
 
     protected function setUp(): void
     {
@@ -69,5 +54,22 @@ class RadiusAction extends Action
 
             $this->success();
         });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'radius';
+    }
+
+    public function relationship(Closure|string $relationship): static
+    {
+        $this->relationship = $relationship;
+
+        return $this;
+    }
+
+    public function getRelationship(): ?string
+    {
+        return $this->evaluate($this->relationship);
     }
 }

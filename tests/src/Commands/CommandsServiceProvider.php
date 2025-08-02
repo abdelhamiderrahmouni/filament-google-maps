@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Commands;
 
 use Cheesegrits\FilamentGoogleMaps\Tests\Columns\Fixtures\LocationTable;

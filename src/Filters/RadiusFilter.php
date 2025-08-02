@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Filters;
 
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
@@ -31,11 +33,6 @@ class RadiusFilter extends BaseFilter
 
     protected string|Closure|null $attribute = null;
 
-    public function getColumns(): array|int|null
-    {
-        return 4;
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -61,6 +58,11 @@ class RadiusFilter extends BaseFilter
 
             return ["{$this->getIndicator()}: {$label}"];
         });
+    }
+
+    public function getColumns(): array|int|null
+    {
+        return 4;
     }
 
     public function apply(Builder $query, array $data = []): Builder

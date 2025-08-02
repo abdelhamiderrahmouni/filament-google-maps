@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Helpers;
 
 use Geocoder\Exception\InvalidServerResponse;
@@ -19,6 +21,18 @@ use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 
 class Geocoder
 {
+    public StringFormatter $formatter;
+
+    protected HandlerStack $stack;
+
+    protected Client $httpClient;
+
+    protected GoogleMaps $provider;
+
+    protected StatefulGeocoder $geocoder;
+
+    protected $isCaching = true;
+
     private static array $formats = [
         'Street Number'                => '%n',
         'Street Name'                  => '%S',
@@ -57,18 +71,6 @@ class Geocoder
         '%c'  => 'country',
         '%T'  => 'timezone',
     ];
-
-    protected HandlerStack $stack;
-
-    protected Client $httpClient;
-
-    protected GoogleMaps $provider;
-
-    protected StatefulGeocoder $geocoder;
-
-    public StringFormatter $formatter;
-
-    protected $isCaching = true;
 
     public function __construct(?int $rateLimit = null)
     {

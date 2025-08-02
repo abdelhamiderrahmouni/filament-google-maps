@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Cheesegrits\FilamentGoogleMaps\Helpers\Geocoder;
 use Cheesegrits\FilamentGoogleMaps\Tests\Commands\TestCase;
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;

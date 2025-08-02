@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cheesegrits\FilamentGoogleMaps\Fields;
 
 use Cheesegrits\FilamentGoogleMaps\DTOs\PositionDTO;
@@ -14,6 +16,16 @@ use JsonException;
 
 class Map extends Field
 {
+    public array $controls = [
+        'mapTypeControl'    => true,
+        'scaleControl'      => true,
+        'streetViewControl' => true,
+        'rotateControl'     => true,
+        'fullscreenControl' => true,
+        'searchBoxControl'  => false,
+        'zoomControl'       => true,
+    ];
+
     protected string $view = 'filament-google-maps::fields.filament-google-maps';
 
     protected int $precision = 8;
@@ -39,8 +51,6 @@ class Map extends Field
     protected Closure|array $types = [];
 
     protected Closure|string|null $markerAction = null;
-
-    private array|Closure $markers = [];
 
     protected Closure|bool $enableClustering = false;
 
@@ -96,39 +106,6 @@ class Map extends Field
 
     protected Closure|string|null $drawingField = null;
 
-    /**
-     * Main field config variables
-     */
-    private array $mapConfig = [
-        'autocomplete'        => false,
-        'autocompleteReverse' => false,
-        'geolocate'           => false,
-        'geolocateOnLoad'     => false,
-        'geolocateLabel'      => '',
-        'draggable'           => true,
-        'clickable'           => false,
-        'defaultLocation'     => [
-            'lat' => 15.3419776,
-            'lng' => 44.2171392,
-        ],
-        'controls'       => [],
-        'drawingControl' => false,
-        'drawingModes'   => [
-            'marker'    => true,
-            'circle'    => true,
-            'rectangle' => true,
-            'polygon'   => true,
-            'polyline'  => true,
-        ],
-        'drawingField'         => null,
-        'statePath'            => '',
-        'layers'               => [],
-        'defaultZoom'          => 8,
-        'reverseGeocodeFields' => [],
-        'debug'                => false,
-        'gmaps'                => '',
-    ];
-
     protected Closure|array $polyOptions = [
         'fillColor'     => '#f06eaa',
         'strokeColor'   => '#00ff00',
@@ -162,19 +139,44 @@ class Map extends Field
         'clickable'     => true,
     ];
 
+    private array|Closure $markers = [];
+
+    /**
+     * Main field config variables
+     */
+    private array $mapConfig = [
+        'autocomplete'        => false,
+        'autocompleteReverse' => false,
+        'geolocate'           => false,
+        'geolocateOnLoad'     => false,
+        'geolocateLabel'      => '',
+        'draggable'           => true,
+        'clickable'           => false,
+        'defaultLocation'     => [
+            'lat' => 15.3419776,
+            'lng' => 44.2171392,
+        ],
+        'controls'       => [],
+        'drawingControl' => false,
+        'drawingModes'   => [
+            'marker'    => true,
+            'circle'    => true,
+            'rectangle' => true,
+            'polygon'   => true,
+            'polyline'  => true,
+        ],
+        'drawingField'         => null,
+        'statePath'            => '',
+        'layers'               => [],
+        'defaultZoom'          => 8,
+        'reverseGeocodeFields' => [],
+        'debug'                => false,
+        'gmaps'                => '',
+    ];
+
     //	protected Closure|string|bool $geocodeFieldsReverse = false;
 
     private array $componentTree = [];
-
-    public array $controls = [
-        'mapTypeControl'    => true,
-        'scaleControl'      => true,
-        'streetViewControl' => true,
-        'rotateControl'     => true,
-        'fullscreenControl' => true,
-        'searchBoxControl'  => false,
-        'zoomControl'       => true,
-    ];
 
     public function height(Closure|string $height): static
     {
@@ -470,7 +472,8 @@ class Map extends Field
 
             if ($url) {
                 return $file;
-            } elseif (Storage::disk($this->geoJsonDisk)->exists($file)) {
+            }
+            if (Storage::disk($this->geoJsonDisk)->exists($file)) {
                 return Storage::disk($this->geoJsonDisk)->get($file);
             }
         }
@@ -857,13 +860,13 @@ class Map extends Field
             }
 
             return $state;
-        } else {
-            try {
-                return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
-            } catch (Exception $e) {
-                return $this->getDefaultLocation();
-            }
         }
+        try {
+            return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            return $this->getDefaultLocation();
+        }
+
     }
 
     public function polyOptions(Closure|array $polyOptions): static
