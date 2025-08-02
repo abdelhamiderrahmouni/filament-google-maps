@@ -8,7 +8,6 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets;
-use Livewire\Attributes\Renderless;
 
 class MapWidget extends Widgets\Widget implements HasActions, HasForms
 {

@@ -2,9 +2,12 @@
 
 namespace Cheesegrits\FilamentGoogleMaps\DTOs;
 
-class PositionDTO {
+class PositionDTO
+{
     public float $lat;
+
     public float $lng;
+
     public int $precision;
 
     /**
@@ -20,7 +23,6 @@ class PositionDTO {
 
     /**
      * A string representation of the object
-     * @return string
      */
     public function __toString(): string
     {
@@ -29,7 +31,6 @@ class PositionDTO {
 
     /**
      * An array representation of the object
-     * @return array
      */
     public function toArray(): array
     {
@@ -41,7 +42,7 @@ class PositionDTO {
 
     /**
      * A json representation of the object
-     * @return string
+     *
      * @throws \JsonException
      */
     public function toJson(): string
@@ -49,22 +50,22 @@ class PositionDTO {
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
-
     /**
      * @throws \Exception
      */
-    private function parseMeasurement(float|string $measurement, int|null $precision = null): float
+    private function parseMeasurement(float|string $measurement, ?int $precision = null): float
     {
         if (is_string($measurement)) {
             $measurement = (float) $measurement;
         }
 
-        if (!is_float($measurement)) {
+        if (! is_float($measurement)) {
             throw new \Exception('Invalid data provided to create PositionDTO: latitude and longitude must be float or a string containing a float');
         }
 
-        if (!$precision)
+        if (! $precision) {
             return $measurement;
+        }
 
         return round($measurement, $precision);
     }

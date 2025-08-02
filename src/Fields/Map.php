@@ -531,14 +531,14 @@ class Map extends Field
         return $this->evaluate($this->geoJsonProperty);
     }
 
-    //public function handleGeoJson(array $features): void
-    //{
+    // public function handleGeoJson(array $features): void
+    // {
     //    $geoJsonHandler = $this->getGeoJsonHandler();
     //
     //    $this->evaluate($geoJsonHandler, [
     //        'features' => $features,
     //    ]);
-    //}
+    // }
 
     /**
      * Set the default location for new maps, accepts an array of either [$lat, $lng] or ['lat' => $lat, 'lng' => $lng],
@@ -558,17 +558,18 @@ class Map extends Field
     {
         $position = $this->evaluate($this->defaultLocation);
 
-        if (!is_array($position)) {
+        if (! is_array($position)) {
             return [
                 'lat' => 0,
                 'lng' => 0,
             ];
         }
 
-        if (array_key_exists('lat', $position) && array_key_exists('lng', $position))
+        if (array_key_exists('lat', $position) && array_key_exists('lng', $position)) {
             return $position;
+        }
 
-        if (!is_numeric($position[0]) || !is_numeric($position[1])) {
+        if (! is_numeric($position[0]) || ! is_numeric($position[1])) {
             throw new Exception('Invalid lat/lng provided for default location');
         }
 
@@ -841,7 +842,7 @@ class Map extends Field
             'mapType'                => $this->getType(),
         ]);
 
-        //ray($config);
+        // ray($config);
 
         return json_encode($config);
     }
