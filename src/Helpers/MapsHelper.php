@@ -59,20 +59,29 @@ class MapsHelper
 
     public static function mapsUrl($server = false, array $libraries = []): string
     {
-        $libraries = implode(',', array_unique(
-            array_filter(
-                array_merge(
-                    ['places'],
-                    explode(',', config('filament-google-maps.libraries')),
-                    $libraries
-                )
-            )
-        ));
 
-        $gmaps = (config('filament-google-maps.force-https') ? 'https' : Request::getScheme() ?? 'https') . '://maps.googleapis.com/maps/api/js'
-            . '?key=' . self::mapsKey($server)
-            . '&libraries=' . $libraries
-            . '&v=weekly';
+        $libraries = implode(
+            separator: ',',
+            array: array_unique(
+                array_filter(
+                    array_merge(
+                        ['places'],
+                        explode(',', config('filament-google-maps.libraries', '')),
+                        $libraries,
+                    ),
+                ),
+            ),
+        );
+
+        $gmaps = (config('filament-google-maps.force-https')
+                ? 'https'
+                : Request::getScheme() ?? 'https')
+                    . '://maps.googleapis.com/maps/api/js'
+                    . '?key=' . self::mapsKey($server)
+                    . '&loading=async'
+                    . '&defer'
+                    . '&libraries=' . $libraries
+                    . '&v=weekly';
 
         /**
          * https://developers.google.com/maps/faq#languagesupport

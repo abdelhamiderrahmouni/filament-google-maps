@@ -8,7 +8,7 @@
                     config: {{ $getMapConfig() }},
                     mapEl: $refs.map,
                 })"
-        id="{{ $getId().'-alpine' }}"
+        id="{{ $getId() . '-alpine' }}"
         wire:ignore
     >
         @if ($isSearchBoxControlEnabled())

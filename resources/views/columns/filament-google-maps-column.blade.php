@@ -1,10 +1,14 @@
-<div {{ $attributes->merge($getExtraAttributes())->class([
-    'filament-google-maps-column',
-    'px-4 py-3' => ! $isInline(),
-]) }}>
+<div
+    {{
+        $attributes->merge($getExtraAttributes())->class([
+            'filament-google-maps-column',
+            'px-4 py-3' => ! $isInline(),
+        ])
+    }}
+>
     @php
         $height = $getHeight();
-        $width = $getWidth();
+        $width  = $getWidth();
     @endphp
 
     <div
@@ -21,7 +25,7 @@
                     {!! $width !== null ? "width: {$width}px;" : null !!}
                 "
                 {{ $getExtraImgAttributeBag() }}
-            >
-       @endif
+            />
+        @endif
     </div>
 </div>

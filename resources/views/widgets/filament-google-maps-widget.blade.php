@@ -45,7 +45,7 @@
                             cachedData: {{ json_encode($this->getCachedData()) }},
                             config: {{ $this->getMapConfig() }},
                             mapEl: $refs.map,
-                            {{ ($pollingInterval = $this->getPollingInterval()) ? "pollingInterval: $pollingInterval," : '' }}
+                            {{ ($pollingInterval = $this->getPollingInterval()) ? "pollingInterval: $pollingInterval," : '' }},
                         })"
                 wire:ignore
                 @if ($maxHeight = $this->getMaxHeight())
