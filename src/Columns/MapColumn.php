@@ -103,9 +103,9 @@ class MapColumn extends Column
         return $this;
     }
 
-    public function getWidth(): ?string
+    public function getWidth(): null|string
     {
-        return $this->evaluate($this->width);
+        return (string) $this->evaluate($this->width);
     }
 
     /**

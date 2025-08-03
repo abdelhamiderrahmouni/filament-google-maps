@@ -30,9 +30,9 @@ it('makes a widget with the artisan make-widget command', function () {
     expect(app_path('Filament/Widgets/') . 'LocationMap.php')->toBeFile();
 });
 
-//function convertNewlines($text)
-//{
-//    $text = implode("\n", explode("\r\n", $text));
-//
-//    return $text;
-//}
+if (! function_exists('convertNewlines')) {
+    function convertNewlines($text)
+    {
+        return str_replace("\r\n", "\n", $text);
+    }
+}

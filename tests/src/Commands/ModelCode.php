@@ -179,9 +179,9 @@ it('outputs the get computed location model-code', function () {
     }'));
 });
 
-function convertNewlines($text)
-{
-    $text = implode("\n", explode("\r\n", $text));
-
-    return $text;
+if (! function_exists('convertNewlines')) {
+    function convertNewlines($text)
+    {
+        return str_replace("\r\n", "\n", $text);
+    }
 }

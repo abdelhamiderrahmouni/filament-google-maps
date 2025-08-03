@@ -151,7 +151,7 @@ class RadiusFilter extends BaseFilter
         return $this;
     }
 
-    public function getKilometers(): string
+    public function getKilometers(): string|false
     {
         return $this->evaluate($this->kilometers);
     }
@@ -175,7 +175,7 @@ class RadiusFilter extends BaseFilter
         return $this;
     }
 
-    public function getSelectUnit(): string
+    public function getSelectUnit(): string|bool
     {
         return $this->evaluate($this->selectUnit);
     }

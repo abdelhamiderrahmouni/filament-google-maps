@@ -252,7 +252,7 @@ class Map extends Field
         return $this;
     }
 
-    public function getAutocompleteReverse(): ?string
+    public function getAutocompleteReverse(): null|string|bool
     {
         return $this->evaluate($this->autocompleteReverse);
     }
@@ -494,7 +494,7 @@ class Map extends Field
         return $this;
     }
 
-    public function getGeoJsonVisible(): ?string
+    public function getGeoJsonVisible(): null|string|bool
     {
         return $this->evaluate($this->geoJsonVisible);
     }
@@ -854,6 +854,10 @@ class Map extends Field
     {
         $state = parent::getState();
 
+        if (is_null($state)) {
+            return $this->getDefaultLocation();
+        }
+
         if (is_array($state)) {
             if (empty(array_filter($state))) {
                 return $this->getDefaultLocation();
@@ -861,6 +865,7 @@ class Map extends Field
 
             return $state;
         }
+
         try {
             return @json_decode($state, true, 512, JSON_THROW_ON_ERROR);
         } catch (Exception $e) {
