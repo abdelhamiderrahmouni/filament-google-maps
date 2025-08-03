@@ -117,6 +117,7 @@ export default function filamentGoogleMapsField({
             "%sp": ["subpremise", "route"],
             "%SP": ["subpremise", "route"],
         },
+
         drawingManager: null,
         overlays: [],
         dataLayer: null,
@@ -489,6 +490,7 @@ export default function filamentGoogleMapsField({
                 }
             });
         },
+
         createMarkers: function () {
             // Clear existing routes before updating markers
             this.routes.forEach((route) => {
@@ -519,6 +521,7 @@ export default function filamentGoogleMapsField({
             // Draw routes after creating markers
             this.drawRoutes();
         },
+
         createMarker: function (location) {
             let markerIcon;
 
@@ -557,9 +560,11 @@ export default function filamentGoogleMapsField({
 
             return marker;
         },
+
         removeMarker: function (marker) {
             marker.setMap(null);
         },
+
         removeMarkers: function () {
             this.routes.forEach((route) => {
                 if (route.polyline) {
@@ -576,6 +581,7 @@ export default function filamentGoogleMapsField({
             }
             this.markers = [];
         },
+
         markerMoved: function (event) {
             this.geoJsonContains(event.latLng);
             this.markerLocation = event.latLng.toJSON();
@@ -595,6 +601,7 @@ export default function filamentGoogleMapsField({
                 );
             }
         },
+
         createClustering: function () {
             if (this.markers.length > 0 && enableClustering) {
                 // use default algorithm and renderer
@@ -604,12 +611,14 @@ export default function filamentGoogleMapsField({
                 });
             }
         },
+
         updateClustering: function () {
             if (enableClustering) {
                 this.clusterer.clearMarkers();
                 this.clusterer.addMarkers(this.markers);
             }
         },
+
         addDrawRoutesButton: function () {
             const button = document.createElement("button");
             button.textContent = "Draw Routes";
@@ -641,6 +650,7 @@ export default function filamentGoogleMapsField({
                 button
             );
         },
+
         drawRoutes: function () {
             if (!this.drawRoutesEnabled) return;
 
@@ -726,6 +736,7 @@ export default function filamentGoogleMapsField({
                 );
             });
         },
+
         clearRoutes: function () {
             this.routes.forEach((route) => {
                 if (route.polyline) {
@@ -737,6 +748,7 @@ export default function filamentGoogleMapsField({
             });
             this.routes = [];
         },
+
         getRouteColor: function (index) {
             // Helper function to generate different colors for routes
             const colors = [
@@ -753,10 +765,12 @@ export default function filamentGoogleMapsField({
             ];
             return colors[index % colors.length];
         },
+
         updateMap: function (position) {
             this.marker.setPosition(position);
             this.map.panTo(position);
         },
+
         updateFromLocation: function (location) {
             if (this.hasReverseGeocode() || this.hasReverseAutocomplete()) {
                 this.geocoder
@@ -777,6 +791,7 @@ export default function filamentGoogleMapsField({
                     });
             }
         },
+
         updateGeocodeFromAddressComponents: function (address_components) {
             if (this.hasReverseGeocode()) {
                 const replacements = this.getReplacements(address_components);
@@ -798,6 +813,7 @@ export default function filamentGoogleMapsField({
                 }
             }
         },
+
         updateGeocodeFromLocation: function (location) {
             if (this.hasReverseGeocode()) {
                 this.geocoder
@@ -813,11 +829,13 @@ export default function filamentGoogleMapsField({
                     });
             }
         },
+
         updateAutocompleteFromFormattedAddress: function (address) {
             if (this.hasReverseAutocomplete()) {
                 setStateUsing(autocomplete, address);
             }
         },
+
         updateAutocompleteFromLocation: function (location) {
             if (this.hasReverseAutocomplete()) {
                 this.geocoder
@@ -835,19 +853,23 @@ export default function filamentGoogleMapsField({
                     });
             }
         },
+
         hasReverseAutocomplete: function () {
             return autocomplete && autocompleteReverse;
         },
+
         hasReverseGeocode: function () {
             return (
                 Object.keys(reverseGeocodeFields).length > 0 ||
                 hasReverseGeocodeUsing
             );
         },
+
         setCoordinates: function (position) {
             // this.state = position;
             setStateUsing(statePath, position);
         },
+
         getCoordinates: function () {
             if (
                 this.state === null ||
@@ -862,6 +884,7 @@ export default function filamentGoogleMapsField({
             }
             return this.state;
         },
+
         getLocation: function () {
             navigator.geolocation.getCurrentPosition((position) => {
                 this.markerLocation = {
