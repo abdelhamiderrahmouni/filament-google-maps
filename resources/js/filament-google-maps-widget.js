@@ -131,6 +131,7 @@ export default function filamentGoogleMapsWidget({
 
             this.show(true);
         },
+
         show: function (force = false) {
             if (this.markers.length > 0 && this.config.fit) {
                 this.fitToBounds(force);
@@ -142,6 +143,7 @@ export default function filamentGoogleMapsWidget({
                 }
             }
         },
+
         createLayers: function () {
             this.layers = this.config.layers.map((layerUrl) => {
                 return new google.maps.KmlLayer({
@@ -150,6 +152,7 @@ export default function filamentGoogleMapsWidget({
                 });
             });
         },
+
         createMarker: function (location) {
             let markerIcon;
 
@@ -188,6 +191,7 @@ export default function filamentGoogleMapsWidget({
 
             return marker;
         },
+
         createMarkers: function () {
             this.markers = this.data.map((location) => {
                 const marker = this.createMarker(location);
@@ -204,9 +208,11 @@ export default function filamentGoogleMapsWidget({
                 return marker;
             });
         },
+
         removeMarker: function (marker) {
             marker.setMap(null);
         },
+
         removeMarkers: function () {
             for (let i = 0; i < this.markers.length; i++) {
                 this.markers[i].setMap(null);
@@ -214,6 +220,7 @@ export default function filamentGoogleMapsWidget({
 
             this.markers = [];
         },
+
         mergeMarkers: function () {
             const operation = (list1, list2, isUnion = false) =>
                 list1.filter(
@@ -266,6 +273,7 @@ export default function filamentGoogleMapsWidget({
 
             this.fitToBounds();
         },
+
         fitToBounds: function (force = false) {
             if (
                 this.markers.length > 0 &&
@@ -281,6 +289,7 @@ export default function filamentGoogleMapsWidget({
                 this.map.fitBounds(this.bounds);
             }
         },
+
         createClustering: function () {
             if (this.markers.length > 0 && this.config.clustering) {
                 // use default algorithm and renderer
@@ -290,12 +299,14 @@ export default function filamentGoogleMapsWidget({
                 });
             }
         },
+
         updateClustering: function () {
             if (this.config.clustering) {
                 this.clusterer.clearMarkers();
                 this.clusterer.addMarkers(this.markers);
             }
         },
+
         moved: function () {
             function areEqual(array1, array2) {
                 if (array1.length === array2.length) {
@@ -322,6 +333,7 @@ export default function filamentGoogleMapsWidget({
                 this.$wire.set("mapFilterIds", ids);
             }
         },
+
         idle: function () {
             if (this.config.mapIsFilter) {
                 let that = self;
@@ -358,12 +370,14 @@ export default function filamentGoogleMapsWidget({
                 );
             }
         },
+
         update: function (data) {
             this.data = data;
             this.mergeMarkers();
             this.updateClustering();
             this.show();
         },
+
         recenter: function (data) {
             this.map.panTo({ lat: data.lat, lng: data.lng });
             this.map.setZoom(data.zoom);

@@ -207,6 +207,7 @@ export default function filamentGoogleGeocomplete({
                 }
             }
         },
+
         setLocation: async function (place) {
             if (isLocation) {
                 await setStateUsing(statePath, {
@@ -244,6 +245,7 @@ export default function filamentGoogleGeocomplete({
                 }
             }
         },
+
         updateReverseGeocode: async function (place) {
             if (this.hasReverseGeocode()) {
                 if (place.address_components) {
@@ -275,6 +277,7 @@ export default function filamentGoogleGeocomplete({
                 }
             }
         },
+
         updateLatLng: async function (place) {
             if (Object.keys(latLngFields).length > 0) {
                 if (place.geometry) {
@@ -289,6 +292,7 @@ export default function filamentGoogleGeocomplete({
                 }
             }
         },
+
         getReplacements: function (address_components) {
             let replacements = {};
 
@@ -310,6 +314,7 @@ export default function filamentGoogleGeocomplete({
 
             return replacements;
         },
+
         hasReverseGeocode: function () {
             return (
                 Object.keys(reverseGeocodeFields).length > 0 ||
