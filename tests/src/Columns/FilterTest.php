@@ -97,6 +97,6 @@ it('can remove radius filter', function () {
             ]
         )
         ->assertCanNotSeeTableRecords($locations)
-        ->removeTableFilter('radius')
+        ->resetTableFilters()
         ->assertCanSeeTableRecords($locations);
 });

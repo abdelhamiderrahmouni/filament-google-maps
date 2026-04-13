@@ -39,7 +39,7 @@
             class="w-full"
             x-ignore
             ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-geocomplete', 'cheesegrits/filament-google-maps') }}"
+            ax-load-src="{{ Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-geocomplete', 'cheesegrits/filament-google-maps') }}"
             x-data="filamentGoogleGeocomplete({
                         setStateUsing: async (path, state) => {
                             return await $wire.set(path, state)
@@ -101,28 +101,28 @@
                     \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                         ->merge($extraAlpineAttributes, escape: false)
                         ->merge([
-                            'autocapitalize'                                                        => $getAutocapitalize(),
-                            'autocomplete'                                                          => $getAutocomplete(),
-                            'autofocus'                                                             => $isAutofocused(),
-                            'disabled'                                                              => $isDisabled,
-                            'id'                                                                    => $id,
-                            'inlinePrefix'                                                          => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                            'inlineSuffix'                                                          => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                            'inputmode'                                                             => $getInputMode(),
-                            'list'                                                                  => $datalistOptions ? $id . '-list' : null,
-                            'max'                                                                   => null,
-                            'maxlength'                                                             => null,
-                            'min'                                                                   => null,
-                            'minlength'                                                             => null,
-                            'placeholder'                                                           => $getPlaceholder(),
-                            'readonly'                                                              => $isReadOnly(),
-                            'required'                                                              => $isRequired() && (! $isConcealed),
-                            'step'                                                                  => null,
-                            'type'                                                                  => 'text',
-                            $applyStateBindingModifiers('wire:model')                               => (! $isLocation) ? $statePath : null,
-                            'x-data'                                                                => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
-                            'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                            'value'                                                                 => $isLocation ? $getFormattedState() : null,
+                            'autocapitalize'                                                       => $getAutocapitalize(),
+                            'autocomplete'                                                         => $getAutocomplete(),
+                            'autofocus'                                                            => $isAutofocused(),
+                            'disabled'                                                             => $isDisabled,
+                            'id'                                                                   => $id,
+                            'inlinePrefix'                                                         => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                            'inlineSuffix'                                                         => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                            'inputmode'                                                            => $getInputMode(),
+                            'list'                                                                 => $datalistOptions ? $id . '-list' : null,
+                            'max'                                                                  => null,
+                            'maxlength'                                                            => null,
+                            'min'                                                                  => null,
+                            'minlength'                                                            => null,
+                            'placeholder'                                                          => $getPlaceholder(),
+                            'readonly'                                                             => $isReadOnly(),
+                            'required'                                                             => $isRequired() && (! $isConcealed),
+                            'step'                                                                 => null,
+                            'type'                                                                 => 'text',
+                            $applyStateBindingModifiers('wire:model')                              => (! $isLocation) ? $statePath : null,
+                            'x-data'                                                               => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
+                            'x-mask' . ($mask instanceof Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+                            'value'                                                                => $isLocation ? $getFormattedState() : null,
                         ], escape: false)
                 "
             />

@@ -14,10 +14,10 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
-use Geocoder\Laravel\Providers\GeocoderService;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
@@ -29,8 +29,6 @@ class TestCase extends BaseTestCase
         return [
             FilamentGoogleMapsServiceProvider::class,
             ColumnsServiceProvider::class,
-            GeocoderService::class,
-
             ActionsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
@@ -38,6 +36,7 @@ class TestCase extends BaseTestCase
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
             InfolistsServiceProvider::class,
+            SchemasServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
             SupportServiceProvider::class,
@@ -59,9 +58,5 @@ class TestCase extends BaseTestCase
             $app['config']->get('view.paths'),
             [__DIR__ . '/../resources/views']
         ));
-        $app['config']->set('realaddress.countries.united-states-of-america', [
-            'cities' => ['New York, NY', 'Los Angeles, CA', 'San Francisco, CA', 'Dallas, TX', 'Chicago, IL', 'Houston, TX', 'Phoenix, AZ', 'San Diego, CA'],
-        ]);
-        $app['config']->set('realaddress.rate-limiter', 100);
     }
 }

@@ -7,7 +7,6 @@ namespace Cheesegrits\FilamentGoogleMaps\Tests\Database\Factories;
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
-use Nonsapiens\RealAddressFactory\RealAddressFactory;
 
 class LocationFactory extends Factory
 {
@@ -32,30 +31,26 @@ class LocationFactory extends Factory
 
     public function withRealAddressAndLatLng(string $country = 'united-states-of-america', ?string $city = null): self
     {
-        //		$address = $this->faker->realAddress($country, $city);
-        $f       = new RealAddressFactory;
-        $address = $f->make(1, $country, $city)->first();
+        $address = $this->fakeRealAddress($city);
 
         return $this->state([
-            'lat'               => $address->getCoordinates()->getLatitude(),
-            'lng'               => $address->getCoordinates()->getLongitude(),
-            'street'            => $address->getStreetNumber() . ' ' . $address->getStreetName(),
-            'city'              => $address->getLocality(),
-            'state'             => $address->getAdminLevels()->get(1)->getName(),
-            'zip'               => $address->getPostalCode(),
-            'formatted_address' => $address->getFormattedAddress(),
+            'lat'               => $address['lat'],
+            'lng'               => $address['lng'],
+            'street'            => $address['street'],
+            'city'              => $address['city'],
+            'state'             => $address['state'],
+            'zip'               => $address['zip'],
+            'formatted_address' => $address['formatted_address'],
         ]);
     }
 
     public function withRealLatLng(string $country = 'united-states-of-america', ?string $city = null): self
     {
-        //		$address = $this->faker->realAddress($country, $city);
-        $f       = new RealAddressFactory;
-        $address = $f->make(1, $country, $city)->first();
+        $address = $this->fakeRealAddress($city);
 
         return $this->state([
-            'lat'               => $address->getCoordinates()->getLatitude(),
-            'lng'               => $address->getCoordinates()->getLongitude(),
+            'lat'               => $address['lat'],
+            'lng'               => $address['lng'],
             'street'            => null,
             'city'              => null,
             'state'             => null,
@@ -66,18 +61,51 @@ class LocationFactory extends Factory
 
     public function withRealAddress(string $country = 'united-states-of-america', ?string $city = null): self
     {
-        //		$address = $this->faker->realAddress($country, $city);
-        $f       = new RealAddressFactory;
-        $address = $f->make(1, $country, $city)->first();
+        $address = $this->fakeRealAddress($city);
 
         return $this->state([
             'lat'               => null,
             'lng'               => null,
-            'street'            => $address->getStreetNumber() . ' ' . $address->getStreetName(),
-            'city'              => $address->getLocality(),
-            'state'             => $address->getAdminLevels()->get(1)->getName(),
-            'zip'               => $address->getPostalCode(),
-            'formatted_address' => $address->getFormattedAddress(),
+            'street'            => $address['street'],
+            'city'              => $address['city'],
+            'state'             => $address['state'],
+            'zip'               => $address['zip'],
+            'formatted_address' => $address['formatted_address'],
         ]);
+    }
+
+    private function fakeRealAddress(?string $city = null): array
+    {
+        $known = [
+            'New York, NY' => [
+                'lat'               => 40.7128,
+                'lng'               => -74.0060,
+                'street'            => '350 5th Ave',
+                'city'              => 'New York',
+                'state'             => 'NY',
+                'zip'               => '10118',
+                'formatted_address' => '350 5th Ave, New York, NY 10118, USA',
+            ],
+            'Los Angeles, CA' => [
+                'lat'               => 34.0522,
+                'lng'               => -118.2437,
+                'street'            => '111 S Grand Ave',
+                'city'              => 'Los Angeles',
+                'state'             => 'CA',
+                'zip'               => '90012',
+                'formatted_address' => '111 S Grand Ave, Los Angeles, CA 90012, USA',
+            ],
+            'San Francisco, CA' => [
+                'lat'               => 37.7749,
+                'lng'               => -122.4194,
+                'street'            => '1 Dr Carlton B Goodlett Pl',
+                'city'              => 'San Francisco',
+                'state'             => 'CA',
+                'zip'               => '94102',
+                'formatted_address' => '1 Dr Carlton B Goodlett Pl, San Francisco, CA 94102, USA',
+            ],
+        ];
+
+        return $known[$city] ?? $this->faker->randomElement(array_values($known));
     }
 }

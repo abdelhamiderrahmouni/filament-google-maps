@@ -1,5 +1,5 @@
 {
-    "plugins": ["./node_modules/prettier-plugin-blade/"],
+    "plugins": ["./node_modules/prettier-plugin-blade/plugin.js"],
     "tabWidth": 4,
     "overrides": [
         {

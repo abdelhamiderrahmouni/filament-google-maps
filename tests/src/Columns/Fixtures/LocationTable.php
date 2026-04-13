@@ -7,18 +7,29 @@ namespace Cheesegrits\FilamentGoogleMaps\Tests\Columns\Fixtures;
 use Cheesegrits\FilamentGoogleMaps\Columns\MapColumn;
 use Cheesegrits\FilamentGoogleMaps\Filters\RadiusFilter;
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\MessageBag;
 use Livewire\Component;
 
-class LocationTable extends Component implements HasForms, Tables\Contracts\HasTable
+class LocationTable extends Component implements HasActions, HasForms, Tables\Contracts\HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use Tables\Concerns\InteractsWithTable;
+
+    public function getErrorBag(): MessageBag
+    {
+        $errorBag = parent::getErrorBag();
+
+        return $errorBag instanceof MessageBag ? $errorBag : new MessageBag((array) $errorBag);
+    }
 
     protected function getTableColumns(): array
     {
@@ -46,6 +57,11 @@ class LocationTable extends Component implements HasForms, Tables\Contracts\HasT
                 ->longitude('lng')
                 ->selectUnit(),
         ];
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table->deferFilters(false);
     }
 
     protected function getTableHeaderActions(): array

@@ -70,7 +70,7 @@ export default function filamentGoogleMapsWidget({
                     "filamentGoogleMapsAPILoaded",
                     function () {
                         this.createMap();
-                    }.bind(this)
+                    }.bind(this),
                 );
             }
         },
@@ -88,7 +88,7 @@ export default function filamentGoogleMapsWidget({
 
                     this.markers.map((marker) => {
                         const newMarker = newData.find(
-                            (location) => location.id === marker.model_id
+                            (location) => location.id === marker.model_id,
                         );
                         marker.setPosition(newMarker.location);
                     });
@@ -126,7 +126,7 @@ export default function filamentGoogleMapsWidget({
                 "filament-google-maps::widget/setMapCenter",
                 (event) => {
                     this.recenter(event.detail);
-                }
+                },
             );
 
             this.show(true);
@@ -169,7 +169,7 @@ export default function filamentGoogleMapsWidget({
                     ) {
                         markerIcon.scaledSize = new google.maps.Size(
                             location.icon.scale[0],
-                            location.icon.scale[1]
+                            location.icon.scale[1],
                         );
                     }
                 }
@@ -230,8 +230,8 @@ export default function filamentGoogleMapsWidget({
                             (b) =>
                                 a.getPosition().lat() ===
                                     b.getPosition().lat() &&
-                                a.getPosition().lng() === b.getPosition().lng()
-                        )
+                                a.getPosition().lng() === b.getPosition().lng(),
+                        ),
                 );
 
             const inBoth = (list1, list2) => operation(list1, list2, true),
@@ -258,7 +258,7 @@ export default function filamentGoogleMapsWidget({
                             marker.getPosition().lat() ===
                                 oldMarkersRemove[i].getPosition().lat() &&
                             marker.getPosition().lng() ===
-                                oldMarkersRemove[i].getPosition().lng()
+                                oldMarkersRemove[i].getPosition().lng(),
                     );
                     this.markers.splice(index, 1);
                 }
@@ -352,7 +352,7 @@ export default function filamentGoogleMapsWidget({
                     "dragstart",
                     (event) => {
                         self.isMapDragging = true;
-                    }
+                    },
                 );
                 google.maps.event.addListener(this.map, "dragend", (event) => {
                     self.isMapDragging = false;
@@ -366,7 +366,7 @@ export default function filamentGoogleMapsWidget({
                     "bounds_changed",
                     (event) => {
                         self.idleSkipped = false;
-                    }
+                    },
                 );
             }
         },

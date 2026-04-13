@@ -6,8 +6,8 @@
     <div
         x-ignore
         ax-load
-        x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('filament-google-maps-field-css', package: 'cheesegrits/filament-google-maps'))]"
-        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-field', package: 'cheesegrits/filament-google-maps') }}"
+        x-load-css="[@js(Filament\Support\Facades\FilamentAsset::getStyleHref('filament-google-maps-field-css', package: 'cheesegrits/filament-google-maps'))]"
+        ax-load-src="{{ Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('filament-google-maps-field', package: 'cheesegrits/filament-google-maps') }}"
         x-data="filamentGoogleMapsField({
                     state: $wire.entangle('{{ $getStatePath() }}'),
                     setStateUsing: (path, state) => {
@@ -60,7 +60,7 @@
                     circleOptions: @js($getCircleOptions()),
                     rectangleOptions: @js($getRectangleOptions()),
                     mapType: @js($getType()),
-                    pollingInterval: @js($getPollingInterval()),
+                    pollingInterval: @js($getMapPollingInterval()),
                     markerUpdatesCallback: @js($getMarkerUpdatesCallback()),
                 })"
         id="{{ $getId() . '-alpine' }}"

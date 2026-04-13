@@ -6,11 +6,11 @@ namespace Cheesegrits\FilamentGoogleMaps\Filters;
 
 use Cheesegrits\FilamentGoogleMaps\Fields\Geocomplete;
 use Closure;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Concerns\HasRelationship;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,22 +38,35 @@ class RadiusFilter extends BaseFilter
         parent::setUp();
 
         $this->columnSpan(2);
+        $this->resetState([
+            'geocomplete' => null,
+            'latitude'    => null,
+            'longitude'   => null,
+            'radius'      => null,
+            'unit'        => null,
+        ]);
 
         //		$this->getTable()->getFiltersFormWidth('7xl');
 
         $this->indicateUsing(function (RadiusFilter $filter, array $state): array {
-            if (blank($state['geocomplete'] ?? null)) {
+            if (blank($state['radius'] ?? null)) {
                 return [];
             }
 
-            if (blank($state['radius'] ?? null)) {
+            $address = $state['geocomplete'] ?? null;
+
+            if (blank($address) && filled($state['latitude'] ?? null) && filled($state['longitude'] ?? null)) {
+                $address = sprintf('%s, %s', $state['latitude'], $state['longitude']);
+            }
+
+            if (blank($address)) {
                 return [];
             }
 
             $label = __('filament-google-maps::fgm.radius_filter.indicate', [
                 'radius'  => $state['radius'],
                 'units'   => $state['unit'],
-                'address' => $state['geocomplete'],
+                'address' => $address,
             ]);
 
             return ["{$this->getIndicator()}: {$label}"];
@@ -80,6 +93,10 @@ class RadiusFilter extends BaseFilter
 
             $latName = $this->getLatitude();
             $lngName = $this->getLongitude();
+
+            $latitude  = (float) $latitude;
+            $longitude = (float) $longitude;
+            $distance  = (float) $distance;
 
             $sql = "((ACOS(SIN($latitude * PI() / 180) * SIN(" . $latName . " * PI() / 180) + COS($latitude * PI() / 180) * COS(" .
                 $latName . " * PI() / 180) * COS(($longitude - " . $lngName . ") * PI() / 180)) * 180 / PI()) * 60 * %f) < $distance";
@@ -189,9 +206,11 @@ class RadiusFilter extends BaseFilter
 
     public function getLatitude(): string
     {
-        return $this->evaluate($this->latitude) ??
-            ! $this->queriesRelationships() ? $this->getTable()->getModel()::getLatLngAttributes()['lat']
-            : $this->getRelationship()->getModel()->getLatLngAttributes()['lat'];
+        return $this->evaluate($this->latitude) ?? (
+            ! $this->queriesRelationships()
+                ? $this->getTable()->getModel()::getLatLngAttributes()['lat']
+                : $this->getRelationship()->getModel()->getLatLngAttributes()['lat']
+        );
     }
 
     public function longitude(string|Closure|null $name): static
@@ -203,9 +222,11 @@ class RadiusFilter extends BaseFilter
 
     public function getLongitude(): string
     {
-        return $this->evaluate($this->longitude) ??
-            ! $this->queriesRelationships() ? $this->getTable()->getModel()::getLatLngAttributes()['lng']
-            : $this->getRelationship()->getModel()->getLatLngAttributes()['lng'];
+        return $this->evaluate($this->longitude) ?? (
+            ! $this->queriesRelationships()
+                ? $this->getTable()->getModel()::getLatLngAttributes()['lng']
+                : $this->getRelationship()->getModel()->getLatLngAttributes()['lng']
+        );
     }
 
     public function section(bool|string|Closure|null $section = true): static

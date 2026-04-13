@@ -88,7 +88,7 @@ class Map extends Field
 
     protected ?Closure $reverseGeocodeUsing = null;
 
-    protected Closure|int|null $pollingInterval = null;
+    protected Closure|int|null $mapPollingInterval = null;
 
     protected Closure|string|null $markerUpdatesCallback = null;
 
@@ -974,14 +974,14 @@ class Map extends Field
 
     public function pollingInterval(Closure|int $interval): static
     {
-        $this->pollingInterval = $interval;
+        $this->mapPollingInterval = $interval;
 
         return $this;
     }
 
-    public function getPollingInterval(): ?int
+    public function getMapPollingInterval(): ?int
     {
-        return $this->evaluate($this->pollingInterval);
+        return $this->evaluate($this->mapPollingInterval);
     }
 
     public function markerUpdatesCallback(Closure|string $callback): static

@@ -152,7 +152,7 @@ export default function filamentGoogleMapsField({
                     "filamentGoogleMapsAPILoaded",
                     function () {
                         this.createMap();
-                    }.bind(this)
+                    }.bind(this),
                 );
             }
         },
@@ -166,7 +166,7 @@ export default function filamentGoogleMapsField({
 
                     this.markers.map((marker) => {
                         const newMarker = newData.find(
-                            (location) => location.id === marker.model_id
+                            (location) => location.id === marker.model_id,
                         );
                         marker.setPosition(newMarker.location);
                     });
@@ -221,7 +221,7 @@ export default function filamentGoogleMapsField({
                     "dragend",
                     (event) => {
                         this.markerMoved(event);
-                    }
+                    },
                 );
             }
 
@@ -229,7 +229,7 @@ export default function filamentGoogleMapsField({
                 const input = pacEl;
                 const searchBox = new google.maps.places.SearchBox(input);
                 this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(
-                    input
+                    input,
                 );
                 searchBox.addListener("places_changed", () => {
                     input.value = "";
@@ -244,7 +244,7 @@ export default function filamentGoogleMapsField({
 
             if (hasPlaceUpdatedUsing) {
                 this.placesService = new google.maps.places.PlacesService(
-                    this.map
+                    this.map,
                 );
             }
 
@@ -284,7 +284,7 @@ export default function filamentGoogleMapsField({
                                 }
                             }
                         },
-                        true
+                        true,
                     );
 
                     const geocompleteOptions = {
@@ -295,7 +295,7 @@ export default function filamentGoogleMapsField({
 
                     const gAutocomplete = new google.maps.places.Autocomplete(
                         geoComplete,
-                        geocompleteOptions
+                        geocompleteOptions,
                     );
 
                     gAutocomplete.setComponentRestrictions({
@@ -309,7 +309,7 @@ export default function filamentGoogleMapsField({
                             window.alert(
                                 "No details available for input: '" +
                                     place.name +
-                                    "'"
+                                    "'",
                             );
                             return;
                         }
@@ -325,7 +325,7 @@ export default function filamentGoogleMapsField({
                         this.markerLocation = place.geometry.location;
                         this.setCoordinates(place.geometry.location);
                         this.updateGeocodeFromAddressComponents(
-                            place.address_components
+                            place.address_components,
                         );
                         if (hasPlaceUpdatedUsing) {
                             placeUpdatedUsing(place);
@@ -371,7 +371,7 @@ export default function filamentGoogleMapsField({
                 locationButton.textContent = geolocateLabel;
                 locationButton.classList.add("custom-map-control-button");
                 this.map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-                    locationButton
+                    locationButton,
                 );
 
                 locationButton.addEventListener("click", (e) => {
@@ -432,7 +432,7 @@ export default function filamentGoogleMapsField({
                     "drawingmode_changed",
                     () => {
                         this.clearSelection();
-                    }
+                    },
                 );
                 // google.maps.event.addListener(this.map, 'click', () => {
                 //     this.clearSelection()
@@ -451,7 +451,7 @@ export default function filamentGoogleMapsField({
                             event.overlay.type = event.type;
                             event.overlay.id = this.guid();
                             event.overlay.feature = this.instanceFeature(
-                                event.overlay
+                                event.overlay,
                             );
                             this.addOverlayEvents(event.overlay);
                             this.overlays.push(event.overlay);
@@ -466,7 +466,7 @@ export default function filamentGoogleMapsField({
                             }
 
                             this.drawingModified();
-                        }
+                        },
                     );
                 }
             }
@@ -538,7 +538,7 @@ export default function filamentGoogleMapsField({
                     ) {
                         markerIcon.scaledSize = new google.maps.Size(
                             location.icon.scale[0],
-                            location.icon.scale[1]
+                            location.icon.scale[1],
                         );
                     }
                 }
@@ -597,7 +597,7 @@ export default function filamentGoogleMapsField({
                     },
                     (results, status) => {
                         status === "OK" && placeUpdatedUsing(results);
-                    }
+                    },
                 );
             }
         },
@@ -641,13 +641,13 @@ export default function filamentGoogleMapsField({
                     this.drawRoutes();
                 } else {
                     alert(
-                        "Default location is not set. Please set a default location first."
+                        "Default location is not set. Please set a default location first.",
                     );
                 }
             });
 
             this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(
-                button
+                button,
             );
         },
 
@@ -729,10 +729,10 @@ export default function filamentGoogleMapsField({
                             label.open(this.map);
                         } else {
                             console.error(
-                                "Directions request failed due to " + status
+                                "Directions request failed due to " + status,
                             );
                         }
-                    }
+                    },
                 );
             });
         },
@@ -777,10 +777,10 @@ export default function filamentGoogleMapsField({
                     .geocode({ location })
                     .then((response) => {
                         this.updateGeocodeFromAddressComponents(
-                            response.results[0].address_components
+                            response.results[0].address_components,
                         );
                         this.updateAutocompleteFromFormattedAddress(
-                            response.results[0].formatted_address
+                            response.results[0].formatted_address,
                         );
                         if (hasReverseGeocodeUsing) {
                             reverseGeocodeUsing(response);
@@ -821,8 +821,8 @@ export default function filamentGoogleMapsField({
                     .then((response) => response.results[0].address_components)
                     .then((address_components) =>
                         this.updateGeocodeFromAddressComponents(
-                            address_components
-                        )
+                            address_components,
+                        ),
                     )
                     .catch((error) => {
                         console.log(error.message);
@@ -844,7 +844,7 @@ export default function filamentGoogleMapsField({
                         if (response.results[0]) {
                             setStateUsing(
                                 autocomplete,
-                                response.results[0].formatted_address
+                                response.results[0].formatted_address,
                             );
                         }
                     })
@@ -930,7 +930,7 @@ export default function filamentGoogleMapsField({
                         type: feature.properties.type,
                         position: new google.maps.LatLng(
                             feature.geometry.coordinates[1],
-                            feature.geometry.coordinates[0]
+                            feature.geometry.coordinates[0],
                         ),
                         draggable: true,
                     });
@@ -938,11 +938,11 @@ export default function filamentGoogleMapsField({
                 case google.maps.drawing.OverlayType.RECTANGLE:
                     var NE = new google.maps.LatLng(
                         feature.geometry.coordinates[0][2][1],
-                        feature.geometry.coordinates[0][2][0]
+                        feature.geometry.coordinates[0][2][0],
                     );
                     var SW = new google.maps.LatLng(
                         feature.geometry.coordinates[0][0][1],
-                        feature.geometry.coordinates[0][0][0]
+                        feature.geometry.coordinates[0][0][0],
                     );
                     instance = new google.maps.Rectangle(
                         Object.assign({}, this.polyOptions, {
@@ -951,7 +951,7 @@ export default function filamentGoogleMapsField({
                             // fillColor: feature.properties.color,
                             bounds: new google.maps.LatLngBounds(SW, NE),
                             editable: false,
-                        })
+                        }),
                     );
                     break;
                 case google.maps.drawing.OverlayType.POLYGON:
@@ -961,10 +961,10 @@ export default function filamentGoogleMapsField({
                             type: feature.properties.type,
                             // fillColor: feature.properties.color,
                             paths: this.transformToMVCArray(
-                                feature.geometry.coordinates
+                                feature.geometry.coordinates,
                             ),
                             editable: false,
-                        })
+                        }),
                     );
                     break;
                 case google.maps.drawing.OverlayType.POLYLINE:
@@ -987,11 +987,11 @@ export default function filamentGoogleMapsField({
                             // fillColor: feature.properties.color,
                             center: new google.maps.LatLng(
                                 feature.geometry.coordinates[1],
-                                feature.geometry.coordinates[0]
+                                feature.geometry.coordinates[0],
                             ),
                             radius: feature.properties.radius,
                             editable: false,
-                        })
+                        }),
                     );
                     break;
             }
@@ -1011,9 +1011,9 @@ export default function filamentGoogleMapsField({
                         },
                         calculatedOverlay.hasOwnProperty("properties")
                             ? calculatedOverlay.properties
-                            : {}
+                            : {},
                     ),
-                })
+                }),
             );
         },
 
@@ -1024,7 +1024,7 @@ export default function filamentGoogleMapsField({
                         ? new google.maps.Data.Point(overlay.getPosition())
                         : {
                               geometry: new google.maps.Data.Point(
-                                  overlay.getPosition()
+                                  overlay.getPosition(),
                               ),
                           };
                 case google.maps.drawing.OverlayType.RECTANGLE:
@@ -1059,11 +1059,11 @@ export default function filamentGoogleMapsField({
                 case google.maps.drawing.OverlayType.POLYLINE:
                     return geometryOnly
                         ? new google.maps.Data.LineString(
-                              overlay.getPath().getArray()
+                              overlay.getPath().getArray(),
                           )
                         : {
                               geometry: new google.maps.Data.LineString(
-                                  overlay.getPath().getArray()
+                                  overlay.getPath().getArray(),
                               ),
                           };
                 case google.maps.drawing.OverlayType.CIRCLE:
@@ -1074,7 +1074,7 @@ export default function filamentGoogleMapsField({
                                   radius: overlay.getRadius(),
                               },
                               geometry: new google.maps.Data.Point(
-                                  overlay.getCenter()
+                                  overlay.getCenter(),
                               ),
                           };
             }
@@ -1101,11 +1101,11 @@ export default function filamentGoogleMapsField({
                                 ? parent
                                 : parent.getAt(
                                       parent.push(new google.maps.MVCArray()) -
-                                          1
+                                          1,
                                   )
                             : clone.getAt(
-                                  clone.push(new google.maps.MVCArray()) - 1
-                              )
+                                  clone.push(new google.maps.MVCArray()) - 1,
+                              ),
                     );
                 }
             }
@@ -1151,31 +1151,31 @@ export default function filamentGoogleMapsField({
                         () => {
                             if (!overlay.drag) {
                                 overlay.feature.setGeometry(
-                                    this.calculateGeometry(overlay, true)
+                                    this.calculateGeometry(overlay, true),
                                 );
                                 this.drawingModified();
                             }
-                        }
+                        },
                     );
                     google.maps.event.addListener(
                         overlay.getPath(),
                         "insert_at",
                         () => {
                             overlay.feature.setGeometry(
-                                this.calculateGeometry(overlay, true)
+                                this.calculateGeometry(overlay, true),
                             );
                             this.drawingModified();
-                        }
+                        },
                     );
                     google.maps.event.addListener(
                         overlay.getPath(),
                         "remove_at",
                         () => {
                             overlay.feature.setGeometry(
-                                this.calculateGeometry(overlay, true)
+                                this.calculateGeometry(overlay, true),
                             );
                             this.drawingModified();
-                        }
+                        },
                     );
                     break;
                 case google.maps.drawing.OverlayType.POLYGON:
@@ -1194,32 +1194,32 @@ export default function filamentGoogleMapsField({
                                         overlay.feature.setGeometry(
                                             this.calculateGeometry(
                                                 overlay,
-                                                true
-                                            )
+                                                true,
+                                            ),
                                         );
                                         this.drawingModified();
                                     }
-                                }
+                                },
                             );
                             google.maps.event.addListener(
                                 paths.getAt(p),
                                 "insert_at",
                                 () => {
                                     overlay.feature.setGeometry(
-                                        this.calculateGeometry(overlay, true)
+                                        this.calculateGeometry(overlay, true),
                                     );
                                     this.drawingModified();
-                                }
+                                },
                             );
                             google.maps.event.addListener(
                                 paths.getAt(p),
                                 "remove_at",
                                 () => {
                                     overlay.feature.setGeometry(
-                                        this.calculateGeometry(overlay, true)
+                                        this.calculateGeometry(overlay, true),
                                     );
                                     this.drawingModified();
-                                }
+                                },
                             );
                         }
                     break;
@@ -1230,11 +1230,11 @@ export default function filamentGoogleMapsField({
                         () => {
                             if (!overlay.drag) {
                                 overlay.feature.setGeometry(
-                                    this.calculateGeometry(overlay, true)
+                                    this.calculateGeometry(overlay, true),
                                 );
                                 this.drawingModified();
                             }
-                        }
+                        },
                     );
                     break;
                 case google.maps.drawing.OverlayType.CIRCLE:
@@ -1245,10 +1245,10 @@ export default function filamentGoogleMapsField({
                             overlay.feature.setProperty(
                                 "radius",
                                 this.calculateGeometry(overlay).properties
-                                    .radius
+                                    .radius,
                             );
                             this.drawingModified();
-                        }
+                        },
                     );
                     break;
             }
@@ -1259,7 +1259,7 @@ export default function filamentGoogleMapsField({
                     "click",
                     function (event) {
                         self.setSelection(this);
-                    }
+                    },
                 );
             }
             google.maps.event.addListener(overlay, "dragstart", () => {
@@ -1269,7 +1269,7 @@ export default function filamentGoogleMapsField({
                 if (overlay.drag) {
                     overlay.drag = false;
                     overlay.feature.setGeometry(
-                        this.calculateGeometry(overlay, true)
+                        this.calculateGeometry(overlay, true),
                     );
                     this.drawingModified();
                 }
@@ -1357,12 +1357,12 @@ export default function filamentGoogleMapsField({
                         if (
                             google.maps.geometry.poly.containsLocation(
                                 latLng,
-                                poly
+                                poly,
                             )
                         ) {
                             if (geoJsonProperty) {
                                 features.push(
-                                    feature.getProperty(geoJsonProperty)
+                                    feature.getProperty(geoJsonProperty),
                                 );
                             } else {
                                 dataLayer.add(feature);
@@ -1379,12 +1379,12 @@ export default function filamentGoogleMapsField({
                             if (
                                 google.maps.geometry.poly.containsLocation(
                                     latLng,
-                                    poly
+                                    poly,
                                 )
                             ) {
                                 if (geoJsonProperty) {
                                     features.push(
-                                        feature.getProperty(geoJsonProperty)
+                                        feature.getProperty(geoJsonProperty),
                                     );
                                 } else {
                                     dataLayer.add(feature);

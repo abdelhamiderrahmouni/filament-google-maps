@@ -67,7 +67,7 @@ export default function filamentGoogleGeocomplete({
                     "filamentGoogleMapsAPILoaded",
                     function () {
                         this.createAutocomplete();
-                    }.bind(this)
+                    }.bind(this),
                 );
             }
         },
@@ -131,12 +131,12 @@ export default function filamentGoogleGeocomplete({
                             }
                         }
                     },
-                    true
+                    true,
                 );
 
                 const autocomplete = new google.maps.places.Autocomplete(
                     geoComplete,
-                    geocompleteOptions
+                    geocompleteOptions,
                 );
 
                 autocomplete.setComponentRestrictions({
@@ -150,7 +150,7 @@ export default function filamentGoogleGeocomplete({
                         window.alert(
                             "No details available for input: '" +
                                 place.name +
-                                "'"
+                                "'",
                         );
                         return;
                     }
@@ -161,7 +161,7 @@ export default function filamentGoogleGeocomplete({
                 });
 
                 const geoLocate = document.getElementById(
-                    statePath + "-geolocate"
+                    statePath + "-geolocate",
                 );
 
                 if (geoLocate) {
@@ -187,20 +187,20 @@ export default function filamentGoogleGeocomplete({
                                                 geoComplete.setAttribute(
                                                     "value",
                                                     response.results[0]
-                                                        .formatted_address
+                                                        .formatted_address,
                                                 );
                                                 this.setLocation(
-                                                    response.results[0]
+                                                    response.results[0],
                                                 );
                                                 this.updateReverseGeocode(
-                                                    response.results[0]
+                                                    response.results[0],
                                                 );
                                                 this.updateLatLng(
-                                                    response.results[0]
+                                                    response.results[0],
                                                 );
                                             }
                                         });
-                                }
+                                },
                             );
                         }
                     });
@@ -228,19 +228,19 @@ export default function filamentGoogleGeocomplete({
                 if (lat && lng) {
                     lat.setAttribute(
                         "value",
-                        place.geometry.location.lat().toString()
+                        place.geometry.location.lat().toString(),
                     );
                     lng.setAttribute(
                         "value",
-                        place.geometry.location.lng().toString()
+                        place.geometry.location.lng().toString(),
                     );
                     await setStateUsing(
                         latPath,
-                        place.geometry.location.lat().toString()
+                        place.geometry.location.lat().toString(),
                     );
                     await setStateUsing(
                         lngPath,
-                        place.geometry.location.lng().toString()
+                        place.geometry.location.lng().toString(),
                     );
                 }
             }
@@ -251,7 +251,7 @@ export default function filamentGoogleGeocomplete({
                 if (place.address_components) {
                     //await setStateUsing(config.autocomplete, response.results[0].formatted_address);
                     const replacements = this.getReplacements(
-                        place.address_components
+                        place.address_components,
                     );
 
                     for (const field in reverseGeocodeFields) {
@@ -283,11 +283,11 @@ export default function filamentGoogleGeocomplete({
                 if (place.geometry) {
                     await setStateUsing(
                         latLngFields.lat,
-                        place.geometry.location.lat().toString()
+                        place.geometry.location.lat().toString(),
                     );
                     await setStateUsing(
                         latLngFields.lng,
-                        place.geometry.location.lng().toString()
+                        place.geometry.location.lng().toString(),
                     );
                 }
             }

@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Cheesegrits\FilamentGoogleMaps\Tests\Fields\Fixtures\Resources;
 
-use Cheesegrits\FilamentGoogleMaps\Columns\MapColumn;
+use BackedEnum;
 // use App\Filament\Resources\MapResource\RelationManagers;
+use Cheesegrits\FilamentGoogleMaps\Columns\MapColumn;
 use Cheesegrits\FilamentGoogleMaps\Fields\Map;
 use Cheesegrits\FilamentGoogleMaps\Filters\RadiusFilter;
 use Cheesegrits\FilamentGoogleMaps\Tests\Fields\Fixtures\Resources\MapResource\Pages;
 use Cheesegrits\FilamentGoogleMaps\Tests\Models\Location;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -20,15 +24,15 @@ class MapResource extends Resource
 {
     protected static ?string $model = Location::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-collection';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static int $globalSearchResultsLimit = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->maxLength(256),
@@ -75,11 +79,11 @@ class MapResource extends Resource
             )
             ->filtersLayout(Tables\Enums\FiltersLayout::Dropdown)
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 

@@ -48,7 +48,7 @@ export default function filamentGoogleMapsField({
         loadGMaps: function () {
             if (
                 !document.getElementById(
-                    "filament-google-maps-google-maps-entry-js"
+                    "filament-google-maps-google-maps-entry-js",
                 )
             ) {
                 const script = document.createElement("script");
@@ -71,7 +71,7 @@ export default function filamentGoogleMapsField({
                     "filamentGoogleMapsAPILoaded",
                     function () {
                         this.createMap();
-                    }.bind(this)
+                    }.bind(this),
                 );
             }
         },
@@ -169,7 +169,7 @@ export default function filamentGoogleMapsField({
                         type: feature.properties.type,
                         position: new google.maps.LatLng(
                             feature.geometry.coordinates[1],
-                            feature.geometry.coordinates[0]
+                            feature.geometry.coordinates[0],
                         ),
                         draggable: true,
                     });
@@ -177,11 +177,11 @@ export default function filamentGoogleMapsField({
                 case google.maps.drawing.OverlayType.RECTANGLE:
                     var NE = new google.maps.LatLng(
                         feature.geometry.coordinates[0][2][1],
-                        feature.geometry.coordinates[0][2][0]
+                        feature.geometry.coordinates[0][2][0],
                     );
                     var SW = new google.maps.LatLng(
                         feature.geometry.coordinates[0][0][1],
-                        feature.geometry.coordinates[0][0][0]
+                        feature.geometry.coordinates[0][0][0],
                     );
                     instance = new google.maps.Rectangle(
                         Object.assign({}, this.polyOptions, {
@@ -190,7 +190,7 @@ export default function filamentGoogleMapsField({
                             // fillColor: feature.properties.color,
                             bounds: new google.maps.LatLngBounds(SW, NE),
                             editable: false,
-                        })
+                        }),
                     );
                     break;
                 case google.maps.drawing.OverlayType.POLYGON:
@@ -200,10 +200,10 @@ export default function filamentGoogleMapsField({
                             type: feature.properties.type,
                             // fillColor: feature.properties.color,
                             paths: this.transformToMVCArray(
-                                feature.geometry.coordinates
+                                feature.geometry.coordinates,
                             ),
                             editable: false,
-                        })
+                        }),
                     );
                     break;
                 case google.maps.drawing.OverlayType.POLYLINE:
@@ -226,11 +226,11 @@ export default function filamentGoogleMapsField({
                             // fillColor: feature.properties.color,
                             center: new google.maps.LatLng(
                                 feature.geometry.coordinates[1],
-                                feature.geometry.coordinates[0]
+                                feature.geometry.coordinates[0],
                             ),
                             radius: feature.properties.radius,
                             editable: false,
-                        })
+                        }),
                     );
                     break;
             }
@@ -250,9 +250,9 @@ export default function filamentGoogleMapsField({
                         },
                         calculatedOverlay.hasOwnProperty("properties")
                             ? calculatedOverlay.properties
-                            : {}
+                            : {},
                     ),
-                })
+                }),
             );
         },
 
@@ -263,7 +263,7 @@ export default function filamentGoogleMapsField({
                         ? new google.maps.Data.Point(overlay.getPosition())
                         : {
                               geometry: new google.maps.Data.Point(
-                                  overlay.getPosition()
+                                  overlay.getPosition(),
                               ),
                           };
                 case google.maps.drawing.OverlayType.RECTANGLE:
@@ -298,11 +298,11 @@ export default function filamentGoogleMapsField({
                 case google.maps.drawing.OverlayType.POLYLINE:
                     return geometryOnly
                         ? new google.maps.Data.LineString(
-                              overlay.getPath().getArray()
+                              overlay.getPath().getArray(),
                           )
                         : {
                               geometry: new google.maps.Data.LineString(
-                                  overlay.getPath().getArray()
+                                  overlay.getPath().getArray(),
                               ),
                           };
                 case google.maps.drawing.OverlayType.CIRCLE:
@@ -313,7 +313,7 @@ export default function filamentGoogleMapsField({
                                   radius: overlay.getRadius(),
                               },
                               geometry: new google.maps.Data.Point(
-                                  overlay.getCenter()
+                                  overlay.getCenter(),
                               ),
                           };
             }
@@ -340,11 +340,11 @@ export default function filamentGoogleMapsField({
                                 ? parent
                                 : parent.getAt(
                                       parent.push(new google.maps.MVCArray()) -
-                                          1
+                                          1,
                                   )
                             : clone.getAt(
-                                  clone.push(new google.maps.MVCArray()) - 1
-                              )
+                                  clone.push(new google.maps.MVCArray()) - 1,
+                              ),
                     );
                 }
             }
