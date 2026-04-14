@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Cheesegrits\FilamentGoogleMaps\Helpers;
 
-use Filament\Forms\Components\Component;
-
 class FieldHelper
 {
-    public static function getTopComponent(Component $component): Component
+    public static function getTopComponent($component)
     {
         $parentComponent = $component->getContainer()->getParentComponent();
 
@@ -32,7 +30,7 @@ class FieldHelper
         return $flatFields;
     }
 
-    public static function getFieldId(string $field, Component $component): ?string
+    public static function getFieldId(string $field, $component): ?string
     {
         $topComponent = self::getTopComponent($component);
         $flatFields   = static::getFlatFields($topComponent);
